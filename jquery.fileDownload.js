@@ -1,5 +1,5 @@
 ﻿/*
-* jQuery File Download Plugin v1.1.0
+* jQuery File Download Plugin v1.2.0
 *
 * http://www.johnculviner.com
 *
@@ -16,7 +16,7 @@ $.extend({
     //  see directly below for possible 'options'
     fileDownload: function (fileUrl, options) {
 
-        var defaultFailCallback = function(responseHtml, url) {
+        var defaultFailCallback = function (responseHtml, url) {
             alert("A file download error has occurred, please try again.");
         };
 
@@ -54,6 +54,17 @@ $.extend({
             //  url             - the original url attempted
             //
             failCallback: defaultFailCallback,
+
+            //
+            // the HTTP method to use. Defaults to "GET".
+            //
+            httpMethod: "GET",
+
+            //
+            // if specified will perform a "httpMethod" request to the specified 'fileUrl' using the specified data.
+            // data must be an object (which will be $.param serialized) or already a key=value param string
+            //
+            data: null,
 
             //
             //a period in milliseconds to poll to determine if a successful file download has occured or not
@@ -115,7 +126,7 @@ $.extend({
                     if (settings.failCallback != defaultFailCallback) {
                         settings.failCallback(responseHtml, url);
                     }
-                    
+
                 } else {
 
                     settings.failCallback(responseHtml, url);
@@ -123,8 +134,61 @@ $.extend({
             }
         };
 
-        //create a temporary iframe that is used to request the file download url
-        var $iframe = $("<iframe style='display: none' src='" + fileUrl + "'></iframe>").appendTo("body");
+
+        //make settings.data a param string if it exists and isn't already
+        if (settings.data !== null && typeof settings.data !== "string") {
+            settings.data = $.param(settings.data);
+        }
+
+
+        var $iframe, $iframeForm;
+
+        if (settings.httpMethod.toUpperCase() === "GET") {
+
+            if (settings.data !== null) {
+                //need to merge any fileUrl params with the data object
+
+                var qsStart = fileUrl.indexOf('?');
+
+                if (qsStart != -1) {
+                    //we have a querystring in the url
+
+                    if (fileUrl.substring(fileUrl.length - 1) !== "&") {
+                        fileUrl = fileUrl + "&";
+                    }
+                } else {
+
+                    fileUrl = fileUrl + "?";
+                }
+
+                fileUrl = fileUrl + settings.data;
+            }
+
+            //create a temporary iframe that is used to request the fileUrl as a GET request
+            $iframe = $("<iframe style='display: none' src='" + fileUrl + "'></iframe>").appendTo("body");
+
+        } else {
+
+            var formInputs = "";
+            if (settings.data !== null) {
+
+                $.each(settings.data.split("&"), function () {
+
+                    var kvp = this.split("=");
+                    formInputs += "<input type='text' name='" + kvp[0] + "' value='" + kvp[1] + "'/>";
+                });
+            }
+
+            $iframe = $("<iframe id='jQueryFileDownload' src='about:blank'></iframe>").appendTo("body");
+
+            var iframeDoc = getiframeDocument($iframe);
+
+            iframeDoc.write("<html><head></head><body><form method='" + settings.httpMethod + "' action='" + fileUrl + "'>" + formInputs + "</form></body></html>");
+
+            $iframeForm = $(iframeDoc).find('form');
+            $iframeForm.submit();
+        }
+
 
         //check if the file download has completed every checkInterval ms
         setTimeout(checkFileDownloadComplete, settings.checkInterval);
@@ -148,14 +212,25 @@ $.extend({
             }
 
             try {
-                //is there text content in the iframe? this means the download failed
-                if ($iframe[0].contentWindow.document.body != null &&
-                    $iframe[0].contentWindow.document.body.innerHTML.length > 0) {
 
-                    internalCallbacks.onFail($iframe[0].contentWindow.document.body.innerHTML, fileUrl);
-                    $iframe.remove();
+                var iframeDoc = getiframeDocument($iframe);
+                if (iframeDoc && iframeDoc.body != null && iframeDoc.body.innerHTML.length > 0) {
 
-                    return;
+                    var isFailure = true;
+
+                    if ($iframeForm && $iframeForm.length > 0) {
+                        var $contents = $(iframeDoc.body).contents().first();
+
+                        if ($contents.length > 0 && $contents[0] === $iframeForm[0]) {
+                            isFailure = false;
+                        }
+                    }
+
+                    if (isFailure) {
+                            internalCallbacks.onFail(iframeDoc.body.innerHTML, fileUrl);
+                            $iframe.remove();
+                            return;
+                    }
                 }
             }
             catch (err) {
@@ -170,6 +245,15 @@ $.extend({
 
             //keep checking...
             setTimeout(checkFileDownloadComplete, settings.checkInterval);
+        }
+
+        //gets an iframes document in a cross browser compatible manner
+        function getiframeDocument($iframe) {
+            var iframeDoc = $iframe[0].contentWindow || $iframe[0].contentDocument;
+            if (iframeDoc.document) {
+                iframeDoc = iframeDoc.document;
+            }
+            return iframeDoc;
         }
     }
 });
