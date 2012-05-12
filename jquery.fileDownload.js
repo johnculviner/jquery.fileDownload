@@ -1,5 +1,5 @@
 ﻿/*
-* jQuery File Download Plugin v1.2.0
+* jQuery File Download Plugin v1.2.1
 *
 * http://www.johnculviner.com
 *
@@ -179,7 +179,7 @@ $.extend({
                 });
             }
 
-            $iframe = $("<iframe id='jQueryFileDownload' src='about:blank'></iframe>").appendTo("body");
+            $iframe = $("<iframe style='display: none' src='about:blank'></iframe>").appendTo("body");
 
             var iframeDoc = getiframeDocument($iframe);
 
