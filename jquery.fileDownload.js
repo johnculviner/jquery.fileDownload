@@ -172,10 +172,13 @@ $.extend({
             var formInputs = "";
             if (settings.data !== null) {
 
-                $.each(settings.data.split("&"), function () {
+                $.each(settings.data.replace(/\+/g, ' ').split("&"), function () {
 
                     var kvp = this.split("=");
-                    formInputs += "<input type='text' name='" + kvp[0] + "' value='" + kvp[1] + "'/>";
+                    var key = decodeURIComponent(kvp[0]);
+                    if ( !key ) return;
+                    var value = decodeURIComponent(kvp[1] || '');
+                    formInputs += $("<input type='text'>").attr("name", key).attr("value", value).wrap("<p>").parent().html();
                 });
             }
 
