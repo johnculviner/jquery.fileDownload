@@ -2,7 +2,7 @@
 
 <h4>06/13/2012 - 1.3.0</h4>
 <ul>
-    <li>Added mobile browser support. The Android browser is unable to support file downloads initiated by a non-GET requests</li>
+    <li>Added mobile browser support. The Android browser is <a href="http://code.google.com/p/android/issues/detail?id=1780">unable</a> to support file downloads initiated by a non-GET requests</li>
 	<li>Thanks to <a href="https://github.com/itsadok">itsadok</a> for fixing a bug dealing with character encoding and escaping with non-GET requests</li>
 </ul>
 
