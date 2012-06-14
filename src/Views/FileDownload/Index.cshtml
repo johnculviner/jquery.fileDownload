@@ -1,0 +1,313 @@
+﻿@{
+    ViewBag.Title = "jquery.fileDownload.js Demo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    Func<int, int> fibCalc = n =>
+                                 {
+                                     int a = 0;
+                                     int b = 1;
+                                     for (int i = 0; i < n; i++)
+                                     {
+                                         int temp = a;
+                                         a = b;
+                                         b = temp + b;
+                                     }
+                                     return a;
+                                 };
+}
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        //
+        // Simple rich user experience - jquery.fileDownload.js & jQuery UI Dialog
+        // uses the optional "options" argument
+        //
+        //      the below uses jQuery "on" http://api.jquery.com/on/ (jQuery 1.7 + required, otherwise use "delegate" or "live") so that any 
+        //      <a class="fileDownload..."/> that is ever loaded into an Ajax site will automatically use jquery.fileDownload.js
+        //      if you are using "on":
+        //          you should generally be able to reduce the scope of the selector below "document" but it is used in this example so it
+        //          works for possible dynamic manipulation in the entire DOM
+        //
+        $(document).on("click", "a.fileDownloadSimpleRichExperience", function () {
+            $.fileDownload($(this).attr('href'), {
+                preparingMessageHtml: "We are preparing your report, please wait...",
+                failMessageHtml: "There was a problem generating your report, please try again."
+            });
+            return false; //this is critical to stop the click event which will trigger a normal file download!
+        });
+
+
+        //
+        // POST Request: Simple rich user experience - jquery.fileDownload.js & jQuery UI Dialog
+        // uses data "options" argument to create a POST request from a form to initiate a file download
+        //
+        //      the below uses jQuery "on" http://api.jquery.com/on/ (jQuery 1.7 + required, otherwise use "delegate" or "live") so that any 
+        //      <form class="fileDownloadForm"> that is ever loaded into an Ajax site will automatically use jquery.fileDownload.js instead of the defualt form submit behavior
+        //      if you are using "on":
+        //          you should generally be able to reduce the scope of the selector below "document" but it is used in this example so it
+        //          works for possible dynamic manipulation in the entire DOM
+        //
+        $(document).on("submit", "form.fileDownloadForm", function (e) {
+            $.fileDownload($(this).attr('action'), {
+                preparingMessageHtml: "We are preparing your report, please wait...",
+                failMessageHtml: "There was a problem generating your report, please try again.",
+                httpMethod: "POST",
+                data: $(this).serialize()
+            });
+            e.preventDefault(); //otherwise a normal form submit would occur
+        });
+
+
+        //Custom rich user experience - jquery.fileDownload.js & jQuery UI Dialog
+        //uses the optional "options" argument
+        //
+        //      the below uses jQuery "on" http://api.jquery.com/on/ (jQuery 1.7 + required, otherwise use "delegate" or "live") so that any 
+        //      <a class="fileDownload..."/> that is ever loaded into an Ajax site will automatically use jquery.fileDownload.js
+        //      if you are using "on":
+        //          you should generally be able to reduce the scope of the selector below "document" but it is used in this example so it
+        //          works for possible dynamic manipulation in the entire DOM
+        //
+        $(function () {
+            $(document).on("click", "a.fileDownloadCustomRichExperience", function () {
+
+                var $preparingFileModal = $("#preparing-file-modal");
+
+                $preparingFileModal.dialog({ modal: true });
+
+                $.fileDownload($(this).attr('href'), {
+                    successCallback: function (url) {
+
+                        $preparingFileModal.dialog('close');
+                    },
+                    failCallback: function (responseHtml, url) {
+
+                        $preparingFileModal.dialog('close');
+                        $("#error-modal").dialog({ modal: true });
+                    }
+                });
+                return false; //this is critical to stop the click event which will trigger a normal file download!
+            });
+        });
+
+
+
+        //
+        //With jquery.fileDownload.js
+        //bare-bones stock setup
+        //
+        $(document).on("click", "a.fileDownloadStock", function () {
+            var linkHref = $(this).attr('href');
+            $.fileDownload(linkHref);
+            return false; //this is critical to stop the click event which will trigger a normal file download!
+        });
+
+    })
+</script>
+
+@*"fancy" razor helper, good stuff: http://weblogs.asp.net/scottgu/archive/2011/05/12/asp-net-mvc-3-and-the-helper-syntax-within-razor.aspx*@
+@helper ReportTable(string linkCssClass)
+    {
+    <table>
+        <tr>
+            <th>File Name</th>
+            <th>Description</th>
+        </tr>
+
+        @for (int i = 0; i < 5; i++)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(string.Format("Report{0}.pdf", i), "DownloadReport", new { id = i }, new { @class = linkCssClass })
+                </td>
+                <td>
+                    @if (i % 2 == 0)
+                    {
+                        <text>This file download will succeed</text>
+                    }
+                    else
+                    {
+                        <text>This file download will fail</text>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+    <br/>
+}
+
+jQuery File Download is a cross server platform compatible jQuery plugin that allows for an Ajax-like file download experience that isn’t normally possible using the web.
+
+For more information and documentation please visit: <a href="http://johnculviner.com/category/jQuery-File-Download.aspx">http://johnculviner.com/category/jQuery-File-Download.aspx</a>
+<br/><br/>
+<b>Note: In order for this plugin to work you must also write a cookie in an http header "Set-Cookie: fileDownload=true; path=/" as mentioned in the original blog post: <a href="http://johnculviner.com/post/2012/03/22/Ajax-like-feature-rich-file-downloads-with-jQuery-File-Download.aspx">http://johnculviner.com/post/2012/03/22/Ajax-like-feature-rich-file-downloads-with-jQuery-File-Download.aspx</a></b>
+
+<h2>Simple rich user experience - jquery.fileDownload.js & jQuery UI Dialog</h2>
+With jquery.fileDownload.js, uses the optional "options" argument to create a simple richer user experience using jQuery UI Dialog <br/><br/>
+@ReportTable("fileDownloadSimpleRichExperience")
+
+<a class="toggle-source" >Toggle Source</a>
+<div class="source">
+    <pre class="brush: js;">
+        //
+        // Simple rich user experience - jquery.fileDownload.js & jQuery UI Dialog
+        // uses the optional "options" argument
+        //
+        //      the below uses jQuery "on" http://api.jquery.com/on/ (jQuery 1.7 + required, otherwise use "delegate" or "live") so that any 
+        //      &lt;a class="fileDownload..."/&gt; that is ever loaded into an Ajax site will automatically use jquery.fileDownload.js
+        //      if you are using "on":
+        //          you should generally be able to reduce the scope of the selector below "document" but it is used in this example so it
+        //          works for possible dynamic manipulation in the entire DOM
+        //
+        $(document).on("click", "a.fileDownloadSimpleRichExperience", function () {
+            $.fileDownload($(this).attr('href'), {
+                preparingMessageHtml: "We are preparing your report, please wait...",
+                failMessageHtml: "There was a problem generating your report, please try again."
+            });
+            return false; //this is critical to stop the click event which will trigger a normal file download!
+        });
+    </pre>
+</div>
+
+
+<h2>POST Request: Simple rich user experience - jquery.fileDownload.js & jQuery UI Dialog</h2>
+With jquery.fileDownload.js, uses data "options" argument to create a POST request to initiate a file download<br/><br/>
+
+@using (Html.BeginForm("DownloadReportPost", "FileDownload", FormMethod.Post, new { @class = "fileDownloadForm" }))
+{
+    <text>
+    <input type="text" name="foo" value="42"/> Setting foo to an odd number will cause the file download to fail <br/>
+    <input type="text" name="bar" value="Some text"/><br/>
+    Yes<input type="radio" name="yesno" value="Yes" checked="checked"/> No <input type="radio" name="yesno" value="No"/> <br/>
+    </text>
+    <select name="fib">
+        @for (int i = 0; i < 15; i++)
+        {
+            int j = fibCalc(i);
+            <option value="@j">@j</option>
+        }
+    </select>
+    <br/>
+    <input type="submit"/>
+}
+<br/>
+
+<a class="toggle-source" >Toggle Source</a>
+<div class="source">
+    <pre class="brush: js;">
+        //
+        // POST Request: Simple rich user experience - jquery.fileDownload.js & jQuery UI Dialog
+        // uses data "options" argument to create a POST request from a form to initiate a file download
+        //
+        //      the below uses jQuery "on" http://api.jquery.com/on/ (jQuery 1.7 + required, otherwise use "delegate" or "live") so that any 
+        //      &lt;form class="fileDownloadForm" ... that is ever loaded into an Ajax site will automatically use jquery.fileDownload.js instead of the defualt form submit behavior
+        //      if you are using "on":
+        //          you should generally be able to reduce the scope of the selector below "document" but it is used in this example so it
+        //          works for possible dynamic manipulation in the entire DOM
+        //
+        $(document).on("submit", "form.fileDownloadForm", function (e) {
+            $.fileDownload($(this).attr('action'), {
+                preparingMessageHtml: "We are preparing your report, please wait...",
+                failMessageHtml: "There was a problem generating your report, please try again.",
+                httpMethod: "POST",
+                data: $(this).serialize()
+            });
+            e.preventDefault(); //otherwise a normal form submit would occur
+        });
+    </pre>
+</div>
+
+
+<h2>Custom rich user experience - jquery.fileDownload.js & jQuery UI Dialog</h2>
+With jquery.fileDownload.js, uses the optional "options" argument to create a custom richer user experience using jQuery UI Dialog <br/><br/>
+@ReportTable("fileDownloadCustomRichExperience")
+
+<a class="toggle-source">Toggle Source</a>
+<div class="source">
+    <pre class="brush: js;">
+        //Custom rich user experience - jquery.fileDownload.js & jQuery UI Dialog
+        //uses the optional "options" argument
+        //
+        //      the below uses jQuery "on" http://api.jquery.com/on/ (jQuery 1.7 + required, otherwise use "delegate" or "live") so that any 
+        //      &lt;a class="fileDownload..."/&gt; that is ever loaded into an Ajax site will automatically use jquery.fileDownload.js
+        //      if you are using "on":
+        //          you should generally be able to reduce the scope of the selector below "document" but it is used in this example so it
+        //          works for possible dynamic manipulation in the entire DOM
+        //
+        $(function () {
+            $(document).on("click", "a.fileDownloadCustomRichExperience", function () {
+
+                var $preparingFileModal = $("#preparing-file-modal");
+
+                $preparingFileModal.dialog({ modal: true });
+
+                $.fileDownload($(this).attr('href'), {
+                    successCallback: function (url) {
+
+                        $preparingFileModal.dialog('close');
+                    },
+                    failCallback: function (responseHtml, url) {
+
+                        $preparingFileModal.dialog('close');
+                        $("#error-modal").dialog({ modal: true });
+                    }
+                });
+                return false; //this is critical to stop the click event which will trigger a normal file download!
+            });
+        });
+    </pre>
+    
+    <pre class="brush: xml;">
+        <div id="preparing-file-modal" title="Preparing report..." style="display: none;">
+            We are preparing your report, please wait...
+
+            <div class="ui-progressbar-value ui-corner-left ui-corner-right" style="width: 100%; height:22px; margin-top: 20px;"></div>
+        </div>
+
+        <div id="error-modal" title="Error" style="display: none;">
+            There was a problem generating your report, please try again.
+        </div>
+    </pre>
+
+</div>
+
+
+
+<h2>Barebones - jquery.fileDownload.js</h2>
+With jquery.fileDownload.js, bare-bones stock setup<br/><br/>
+@ReportTable("fileDownloadStock")
+
+<a class="toggle-source">Toggle Source</a>
+<div class="source">
+    <pre class="brush: js;">
+        //
+        //With jquery.fileDownload.js
+        //bare-bones stock setup
+        //
+        $(document).on("click", "a.fileDownloadStock", function () {
+            var linkHref = $(this).attr('href');
+            $.fileDownload(linkHref);
+            return false; //this is critical to stop the click event which will trigger a normal file download!
+        });
+    </pre>
+</div>
+
+
+
+<h2>Stock Browser Behavior</h2>
+Normal file download experience without using jquery.fileDownload.js. Ick!<br/><br/>   
+@ReportTable("")
+
+
+<div id="preparing-file-modal" title="Preparing report..." style="display: none;">
+    We are preparing your report, please wait...
+
+    <div class="ui-progressbar-value ui-corner-left ui-corner-right" style="width: 100%; height:22px; margin-top: 20px;"></div>
+</div>
+
+
+<div id="error-modal" title="Error" style="display: none;">
+    There was a problem generating your report, please try again.
+</div>

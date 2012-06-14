@@ -1,0 +1,7 @@
+$ cat .gitignore
+
+bin/**/*
+obj/**/*
+
+*.user
+*.suo

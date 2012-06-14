@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>@ViewBag.Title</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type="text/javascript"></script>
+        <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+        <link href="@Url.Content("~/Content/ui-lightness/jquery-ui-1.8.18.custom.css")" rel="stylesheet" type="text/css" />
+        <script src="@Url.Content("~/Scripts/jquery.fileDownload.js")" type="text/javascript"></script>
+        <script type="text/javascript" src="@Url.Content("~/Scripts/Support/shCore.js")"></script>
+        <script type="text/javascript" src="@Url.Content("~/Scripts/Support/shBrushJScript.js")"></script>
+        <script type="text/javascript" src="@Url.Content("~/Scripts/Support/shBrushXml.js")"></script>
+	    <link type="text/css" rel="stylesheet" href="@Url.Content("~/Content/shCoreDefault.css")" />
+        <script type="text/javascript">
+            $(function () {
+
+                //setup syntax highlighter on all pages
+                SyntaxHighlighter.all();
+
+                $('a.toggle-source').click(function () {
+                    $(this).next().toggle('slow');
+                });
+            });        
+        </script>
+    </head>
+    
+    <body>
+        @RenderBody()
+    </body>
+</html>
