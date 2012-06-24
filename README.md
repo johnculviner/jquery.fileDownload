@@ -7,15 +7,15 @@ jQuery File Download is a cross server platform compatible jQuery plugin that al
 * iOS 5.0 - reasonably sure it will work on earlier versions 
 * Android 4.0 - non-GET requests do not work due to a long-standing [bug](http://code.google.com/p/android/issues/detail?id=1780) in the Android browser
 
+###Demo (of this exact source):
+http://jqueryfiledownload.apphb.com/
+
 
 ###Note - You must also write a cookie inconjuntion with using this plugin as mentioned in the orignal post:
 http://johnculviner.com/post/2012/03/22/Ajax-like-feature-rich-file-downloads-with-jQuery-File-Download.aspx
 
 ####Example of writing cookie (MVC):
 https://github.com/johnculviner/jquery.fileDownload/blob/master/src/Common/FileDownloadControllerBase.cs
-
-###Demo (of this exact source):
-http://jqueryfiledownload.apphb.com/
 
 ###For more information and documentation please visit:
 http://johnculviner.com/category/jQuery-File-Download.aspx
