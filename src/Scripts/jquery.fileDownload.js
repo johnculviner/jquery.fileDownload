@@ -128,9 +128,9 @@ $.extend({
             //the stock android browser straight up doesn't support file downloads initiated by non GET requests: http://code.google.com/p/android/issues/detail?id=1780
 
             if ($().dialog) {
-                $("<div>").html(settings.androidPostUnsupportedMessageHtml).dialog(settings.dialogOptions);              
+                $("<div>").html(settings.androidPostUnsupportedMessageHtml).dialog(settings.dialogOptions);
             } else {
-                alert(settings.androidPostUnsupportedMessageHtml);               
+                alert(settings.androidPostUnsupportedMessageHtml);
             }
 
             return;
@@ -247,7 +247,7 @@ $.extend({
                     if (!key) return;
                     var value = decodeURIComponent(kvp[1] || '');
 
-                    formInnerHtml += $("<input type='text'>").attr("name", key).attr("value", value).wrap("<p>").parent().html();
+                    formInnerHtml += '<input type="hidden" name="' + key + '" value="' + value + '" />';
                 });
             }
 
@@ -274,7 +274,7 @@ $.extend({
                     formDoc = getiframeDocument($iframe);
                 }
 
-                formDoc.write("<html><head></head><body><form style='display:none' method='" + settings.httpMethod + "' action='" + fileUrl + "'>" + formInnerHtml + "</form>" + settings.popupWindowTitle + "</body></html>");
+                formDoc.write("<html><head></head><body><form method='" + settings.httpMethod + "' action='" + fileUrl + "'>" + formInnerHtml + "</form>" + settings.popupWindowTitle + "</body></html>");
                 $form = $(formDoc).find('form');
             }
 
