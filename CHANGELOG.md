@@ -1,5 +1,10 @@
 <h2>jQuery File Download Changelog</h2>
 
+<h4>06/26/2012 - 1.3.1</h4>
+<ul>
+    <li>Fixed a regression bug where POST file downloads weren't working properly in IE 6 or IE 7</li>
+</ul>
+
 <h4>06/13/2012 - 1.3.0</h4>
 <ul>
     <li>Added mobile browser support. The Android browser is <a href="http://code.google.com/p/android/issues/detail?id=1780">unable</a> to support file downloads initiated by a non-GET requests</li>
