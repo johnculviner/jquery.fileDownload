@@ -96,8 +96,15 @@ $.extend({
             //
             //the title for the popup second window as a download is processing in the case of a mobile browser
             //
-            popupWindowTitle: "Initiating file download..."
+            popupWindowTitle: "Initiating file download...",
 
+            //
+            //Functionality to encode HTML entities for a POST, need this if data is an object with properties whose values contains strings with quotation marks.
+            //HTML entity encoding is done using the htmlentities() function from the phpjs.org project.
+            //Note that some browsers will POST the string htmlentity-encoded whilst others will decode it before POSTing.
+            //It is recommended that on the server, htmlentity decoding is done irrespective.
+            //
+            encodeHTMLEntities: true
         }, options);
 
 
@@ -243,9 +250,11 @@ $.extend({
                 $.each(settings.data.replace(/\+/g, ' ').split("&"), function () {
 
                     var kvp = this.split("=");
-                    var key = decodeURIComponent(kvp[0]);
+                    
+                    var key = settings.encodeHTMLEntities?htmlentities(decodeURIComponent(kvp[0])):decodeURIComponent(kvp[0]);
                     if (!key) return;
-                    var value = decodeURIComponent(kvp[1] || '');
+                    var value = kvp[1] || '';
+                    value = settings.encodeHTMLEntities?htmlentities(decodeURIComponent(kvp[1])):decodeURIComponent(kvp[1]);
 
                     formInnerHtml += '<input type="hidden" name="' + key + '" value="' + value + '" />';
                 });
