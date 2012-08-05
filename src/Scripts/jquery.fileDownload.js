@@ -100,7 +100,7 @@ $.extend({
 
             //
             //Functionality to encode HTML entities for a POST, need this if data is an object with properties whose values contains strings with quotation marks.
-            //HTML entity encoding is done using the htmlentities() function from the phpjs.org project.
+            //HTML entity encoding is done by replacing all &,<,>,',",\r,\n characters.
             //Note that some browsers will POST the string htmlentity-encoded whilst others will decode it before POSTing.
             //It is recommended that on the server, htmlentity decoding is done irrespective.
             //
@@ -251,10 +251,10 @@ $.extend({
 
                     var kvp = this.split("=");
                     
-                    var key = settings.encodeHTMLEntities?htmlentities(decodeURIComponent(kvp[0])):decodeURIComponent(kvp[0]);
+                    var key = settings.encodeHTMLEntities?htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[0])):decodeURIComponent(kvp[0]);
                     if (!key) return;
                     var value = kvp[1] || '';
-                    value = settings.encodeHTMLEntities?htmlentities(decodeURIComponent(kvp[1])):decodeURIComponent(kvp[1]);
+                    value = settings.encodeHTMLEntities?htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[1])):decodeURIComponent(kvp[1]);
 
                     formInnerHtml += '<input type="hidden" name="' + key + '" value="' + value + '" />';
                 });
@@ -393,6 +393,17 @@ $.extend({
                     }
                 }
             }
+        }
+
+        function htmlSpecialCharsEntityEncode(str) {
+            return str.replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/;/g, '&#59;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;') //single quotes just to be safe
+                .replace(/\n/g, "&#10;")
+                .replace(/\r/g, "&#13;");
         }
     }
 });
