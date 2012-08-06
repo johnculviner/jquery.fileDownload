@@ -396,14 +396,13 @@ $.extend({
         }
 
         function htmlSpecialCharsEntityEncode(str) {
-            return str.replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/;/g, '&#59;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;') //single quotes just to be safe
-                .replace(/\n/g, "&#10;")
-                .replace(/\r/g, "&#13;");
+            return str.replace(/&/gm, '&amp;')
+                .replace(/\n/gm, "&#10;")
+                .replace(/\r/gm, "&#13;")
+                .replace(/</gm, '&lt;')
+                .replace(/>/gm, '&gt;')
+                .replace(/"/gm, '&quot;')
+                .replace(/'/gm, '&apos;'); //single quotes just to be safe
         }
     }
 });
