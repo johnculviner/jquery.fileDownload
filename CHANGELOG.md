@@ -1,5 +1,12 @@
 <h2>jQuery File Download Changelog</h2>
 
+<h4>09/06/2012 - 1.3.2</h4>
+<ul>
+    <li>Fixed a bug that intermittently occured in Firefox where a file download would complete but the built in browser save dialog would not appear</li>
+	<li>Merged in a pull from doronhorwitz surrounding special character encoding. Thanks doronhorwitz!</li>
+	<li>Added jQuery.noConflict() to avoid $ conflicts that were occuring for some users</li>
+</ul>
+
 <h4>06/26/2012 - 1.3.1</h4>
 <ul>
     <li>Fixed a regression bug where POST file downloads weren't working properly in IE 6 or IE 7</li>
