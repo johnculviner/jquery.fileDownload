@@ -1,5 +1,5 @@
 ﻿/*
-* jQuery File Download Plugin v1.3.0
+* jQuery File Download Plugin v1.3.2
 *
 * http://www.johnculviner.com
 *
@@ -9,6 +9,7 @@
 *   http://www.opensource.org/licenses/mit-license.php
 */
 
+var $ = jQuery.noConflict();
 
 $.extend({
     //
@@ -250,11 +251,11 @@ $.extend({
                 $.each(settings.data.replace(/\+/g, ' ').split("&"), function () {
 
                     var kvp = this.split("=");
-                    
-                    var key = settings.encodeHTMLEntities?htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[0])):decodeURIComponent(kvp[0]);
+
+                    var key = settings.encodeHTMLEntities ? htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[0])) : decodeURIComponent(kvp[0]);
                     if (!key) return;
                     var value = kvp[1] || '';
-                    value = settings.encodeHTMLEntities?htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[1])):decodeURIComponent(kvp[1]);
+                    value = settings.encodeHTMLEntities ? htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[1])) : decodeURIComponent(kvp[1]);
 
                     formInnerHtml += '<input type="hidden" name="' + key + '" value="' + value + '" />';
                 });
@@ -307,7 +308,7 @@ $.extend({
                 var date = new Date(1000);
                 document.cookie = settings.cookieName + "=; expires=" + date.toUTCString() + "; path=" + settings.cookiePath;
 
-                cleanUp();
+                cleanUp(false);
 
                 return;
             }
@@ -374,25 +375,29 @@ $.extend({
 
         function cleanUp(isFailure) {
 
-            if ($iframe) {
-                $iframe.remove();
-            }
+            setTimeout(function() {
 
-            if (downloadWindow) {
-
-                if (isAndroid) {
-                    downloadWindow.close();
+                if ($iframe) {
+                    $iframe.remove();
                 }
 
-                if (isIos) {
-                    if (isFailure) {
-                        downloadWindow.focus(); //ios safari bug doesn't allow a window to be closed unless it is focused
+                if (downloadWindow) {
+
+                    if (isAndroid) {
                         downloadWindow.close();
-                    } else {
-                        downloadWindow.focus();
+                    }
+
+                    if (isIos) {
+                        if (isFailure) {
+                            downloadWindow.focus(); //ios safari bug doesn't allow a window to be closed unless it is focused
+                            downloadWindow.close();
+                        } else {
+                            downloadWindow.focus();
+                        }
                     }
                 }
-            }
+
+            }, 0);
         }
 
         function htmlSpecialCharsEntityEncode(str) {
