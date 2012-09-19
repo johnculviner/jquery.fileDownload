@@ -5,7 +5,7 @@ jQuery File Download is a cross server platform compatible jQuery plugin that al
 * Firefox 11 - reasonably sure it will work on earlier versions
 * Chrome 17 - reasonably sure it will work on earlier versions
 * iOS 5.0 - reasonably sure it will work on earlier versions 
-* Android 4.0 - non-GET requests do not work due to a long-standing [bug](http://code.google.com/p/android/issues/detail?id=1780) in the Android browser
+* Android 4.0 - non-GET requests do not work due to a long-standing [bug](http://code.google.com/p/android/issues/detail?id=1780) in the Android browser. This is handled 'gracefully' with a message to the user.
 
 ###Demo (of this exact source):
 http://jqueryfiledownload.apphb.com/
