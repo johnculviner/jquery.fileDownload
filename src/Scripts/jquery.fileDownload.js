@@ -1,5 +1,5 @@
 ﻿/*
-* jQuery File Download Plugin v1.3.2
+* jQuery File Download Plugin v1.3.3
 *
 * http://www.johnculviner.com
 *
@@ -376,10 +376,6 @@ $.extend({
         function cleanUp(isFailure) {
 
             setTimeout(function() {
-
-                if ($iframe) {
-                    $iframe.remove();
-                }
 
                 if (downloadWindow) {
 
