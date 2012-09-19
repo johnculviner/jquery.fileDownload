@@ -1,5 +1,10 @@
 <h2>jQuery File Download Changelog</h2>
 
+<h4>09/18/2012 - 1.3.3</h4>
+<ul>
+    <li>Removed iframe removal after file download all-together. This caused issues for Firefox under certain conditions and certainly isn't necessary. (Just keeps the DOM clean..)</li>
+</ul>
+
 <h4>09/06/2012 - 1.3.2</h4>
 <ul>
     <li>Fixed a bug that intermittently occured in Firefox where a file download would complete but the built in browser save dialog would not appear</li>
