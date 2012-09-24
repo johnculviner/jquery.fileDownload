@@ -10,8 +10,9 @@ jQuery File Download is a cross server platform compatible jQuery plugin that al
 ###Demo (of this exact source):
 http://jqueryfiledownload.apphb.com/
 
-
+<blink>
 ###Note - You must also write a cookie inconjuntion with using this plugin as mentioned in the orignal post:
+</blink>
 http://johnculviner.com/post/2012/03/22/Ajax-like-feature-rich-file-downloads-with-jQuery-File-Download.aspx
 
 ####Example of writing cookie (MVC):
