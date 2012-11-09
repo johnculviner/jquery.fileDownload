@@ -8,7 +8,7 @@ using MvcDemo.Common;
 
 namespace MvcDemo.Controllers
 {
-    public class FileDownloadController : FileDownloadControllerBase
+    public class FileDownloadController : Controller
     {
         public ActionResult Index()
         {
@@ -16,13 +16,13 @@ namespace MvcDemo.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet, FileDownload]
         public FilePathResult DownloadReport(int id)
         {
             return GetReport(id);
         }
 
-        [HttpPost]
+        [HttpPost, FileDownload]
         public FilePathResult DownloadReportPost(int foo)
         {
             return GetReport(foo);
@@ -35,7 +35,7 @@ namespace MvcDemo.Controllers
 
             //only even file ids will work
             if (id % 2 == 0)
-                //the required cookie for jquery.fileDownload is written by FileDownloadController for all
+                //the required cookie for jquery.fileDownload is written by the FileDownloadAttribute for all
                 //result types that inherit from FileResult but could be done manually here if desired
                 return File("~/Report.pdf", "application/pdf", string.Format("Report{0}.pdf", id));
 

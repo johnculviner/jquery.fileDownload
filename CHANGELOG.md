@@ -1,5 +1,11 @@
 <h2>jQuery File Download Changelog</h2>
 
+<h4>11/08/2012</h4>
+<ul>
+	<li>Replaced base controller in demo with FileDownloadAttribute that allows setting cookie name and path on a per action basis.
+	- contributed by https://github.com/rdefreitas</li>
+</ul>
+
 <h4>09/18/2012 - 1.3.3</h4>
 <ul>
     <li>Removed iframe removal after file download all-together. This caused issues for Firefox under certain conditions and certainly isn't necessary. (Just keeps the DOM clean..)</li>

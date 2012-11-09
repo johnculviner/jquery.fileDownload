@@ -44,7 +44,7 @@
     <Reference Include="System.Web.Routing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\FileDownloadControllerBase.cs" />
+    <Compile Include="Common\FileDownloadAttribute.cs" />
     <Compile Include="Controllers\FileDownloadController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
