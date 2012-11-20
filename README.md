@@ -15,7 +15,8 @@ http://jqueryfiledownload.apphb.com/
 http://johnculviner.com/post/2012/03/22/Ajax-like-feature-rich-file-downloads-with-jQuery-File-Download.aspx
 
 ####Example of writing cookie (MVC):
-https://github.com/johnculviner/jquery.fileDownload/blob/master/src/Common/FileDownloadControllerBase.cs
+https://github.com/johnculviner/jquery.fileDownload/blob/master/src/Common/FileDownloadAttribute.cs
+The attribute is used on any controller action that may return a file download that you would like to use jquery.fileDownload.js with
 
 ###For more information and documentation please visit:
 http://johnculviner.com/category/jQuery-File-Download.aspx
