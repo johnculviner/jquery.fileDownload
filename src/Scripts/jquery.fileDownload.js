@@ -113,7 +113,7 @@ $.extend({
         var userAgent = (navigator.userAgent || navigator.vendor || window.opera).toLowerCase();
 
         var isIos = false;                  //has full support of features in iOS 4.0+, uses a new window to accomplish this.
-        var isAndroid = false;              //has full support of GET features in 4.0+ by using a new window. POST will resort to a POST on the current window.
+        var isAndroid = false;              //has full support of GET features in 4.0+ by using a new window. Non-GET is completely unsupported by the browser. See above for specifying a message.
         var isOtherMobileBrowser = false;   //there is no way to reliably guess here so all other mobile devices will GET and POST to the current window.
 
         if (/ip(ad|hone|od)/.test(userAgent)) {
