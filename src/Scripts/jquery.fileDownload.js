@@ -9,7 +9,7 @@
 *   http://www.opensource.org/licenses/mit-license.php
 */
 
-var $ = jQuery.noConflict();
+(function($){
 
 $.extend({
     //
@@ -408,3 +408,4 @@ $.extend({
     }
 });
 
+})(jQuery);
