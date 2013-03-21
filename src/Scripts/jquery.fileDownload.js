@@ -397,13 +397,17 @@ $.extend({
         }
 
         function htmlSpecialCharsEntityEncode(str) {
-            return str.replace(/&/gm, '&amp;')
-                .replace(/\n/gm, "&#10;")
-                .replace(/\r/gm, "&#13;")
-                .replace(/</gm, '&lt;')
-                .replace(/>/gm, '&gt;')
-                .replace(/"/gm, '&quot;')
-                .replace(/'/gm, '&apos;'); //single quotes just to be safe
+            return str.replace(/[<>&\r\n"']/gm, function(match) {
+        		return '&' + {
+        			'<': 'lt;',
+        			'>': 'gt;',
+        			'&': 'amp;',
+        			'\r': "#13;",
+        			'\n': "#10;",
+        			'"': 'quot;',
+        			"'": 'apos;' /*single quotes just to be safe*/
+        		}[match];
+        	});
         }
     }
 });
