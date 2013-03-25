@@ -112,9 +112,9 @@ $.extend({
         //Setup mobile browser detection: Partial credit: http://detectmobilebrowser.com/
         var userAgent = (navigator.userAgent || navigator.vendor || window.opera).toLowerCase();
 
-        var isIos = false;                  //has full support of features in iOS 4.0+, uses a new window to accomplish this.
-        var isAndroid = false;              //has full support of GET features in 4.0+ by using a new window. Non-GET is completely unsupported by the browser. See above for specifying a message.
-        var isOtherMobileBrowser = false;   //there is no way to reliably guess here so all other mobile devices will GET and POST to the current window.
+        var isIos;                  //has full support of features in iOS 4.0+, uses a new window to accomplish this.
+        var isAndroid;              //has full support of GET features in 4.0+ by using a new window. Non-GET is completely unsupported by the browser. See above for specifying a message.
+        var isOtherMobileBrowser;   //there is no way to reliably guess here so all other mobile devices will GET and POST to the current window.
 
         if (/ip(ad|hone|od)/.test(userAgent)) {
 
@@ -145,7 +145,7 @@ $.extend({
         }
 
         //wire up a jquery dialog to display the preparing message if specified
-        var $preparingDialog = null;
+        var $preparingDialog;
         if (settings.preparingMessageHtml) {
 
             $preparingDialog = $("<div>").html(settings.preparingMessageHtml).dialog(settings.dialogOptions);
@@ -253,11 +253,10 @@ $.extend({
                     var kvp = this.split("=");
 
                     var key = settings.encodeHTMLEntities ? htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[0])) : decodeURIComponent(kvp[0]);
-                    if (!key) return;
-                    var value = kvp[1] || '';
-                    value = settings.encodeHTMLEntities ? htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[1])) : decodeURIComponent(kvp[1]);
-
-                    formInnerHtml += '<input type="hidden" name="' + key + '" value="' + value + '" />';
+                    if (key) {
+                        var value = settings.encodeHTMLEntities ? htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[1])) : decodeURIComponent(kvp[1]);
+                        formInnerHtml += '<input type="hidden" name="' + key + '" value="' + value + '" />';
+                    }
                 });
             }
 
@@ -384,11 +383,9 @@ $.extend({
                     }
 
                     if (isIos) {
+                        downloadWindow.focus(); //ios safari bug doesn't allow a window to be closed unless it is focused
                         if (isFailure) {
-                            downloadWindow.focus(); //ios safari bug doesn't allow a window to be closed unless it is focused
                             downloadWindow.close();
-                        } else {
-                            downloadWindow.focus();
                         }
                     }
                 }
@@ -396,17 +393,21 @@ $.extend({
             }, 0);
         }
 
+
+        var htmlSpecialCharsRegEx = /[<>&\r\n"']/gm;
+        var htmlSpecialCharsPlaceHolders = {
+            '<': 'lt;',
+            '>': 'gt;',
+            '&': 'amp;',
+            '\r': "#13;",
+            '\n': "#10;",
+            '"': 'quot;',
+            "'": 'apos;' /*single quotes just to be safe*/
+        };
+
         function htmlSpecialCharsEntityEncode(str) {
-            return str.replace(/[<>&\r\n"']/gm, function(match) {
-        		return '&' + {
-        			'<': 'lt;',
-        			'>': 'gt;',
-        			'&': 'amp;',
-        			'\r': "#13;",
-        			'\n': "#10;",
-        			'"': 'quot;',
-        			"'": 'apos;' /*single quotes just to be safe*/
-        		}[match];
+            return str.replace(htmlSpecialCharsRegEx, function(match) {
+            	return '&' + htmlSpecialCharsPlaceHolders[match];
         	});
         }
     }
