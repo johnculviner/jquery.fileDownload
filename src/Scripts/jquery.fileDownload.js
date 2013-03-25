@@ -9,7 +9,7 @@
 *   http://www.opensource.org/licenses/mit-license.php
 */
 
-(function($){
+(function($, window){
 
 $.extend({
     //
@@ -112,15 +112,15 @@ $.extend({
         //Setup mobile browser detection: Partial credit: http://detectmobilebrowser.com/
         var userAgent = (navigator.userAgent || navigator.vendor || window.opera).toLowerCase();
 
-        var isIos = false;                  //has full support of features in iOS 4.0+, uses a new window to accomplish this.
-        var isAndroid = false;              //has full support of GET features in 4.0+ by using a new window. Non-GET is completely unsupported by the browser. See above for specifying a message.
-        var isOtherMobileBrowser = false;   //there is no way to reliably guess here so all other mobile devices will GET and POST to the current window.
+        var isIos;                  //has full support of features in iOS 4.0+, uses a new window to accomplish this.
+        var isAndroid;              //has full support of GET features in 4.0+ by using a new window. Non-GET is completely unsupported by the browser. See above for specifying a message.
+        var isOtherMobileBrowser;   //there is no way to reliably guess here so all other mobile devices will GET and POST to the current window.
 
         if (/ip(ad|hone|od)/.test(userAgent)) {
 
             isIos = true;
 
-        } else if (userAgent.indexOf('android') != -1) {
+        } else if (userAgent.indexOf('android') !== -1) {
 
             isAndroid = true;
 
@@ -132,7 +132,7 @@ $.extend({
 
         var httpMethodUpper = settings.httpMethod.toUpperCase();
 
-        if (isAndroid && httpMethodUpper != "GET") {
+        if (isAndroid && httpMethodUpper !== "GET") {
             //the stock android browser straight up doesn't support file downloads initiated by non GET requests: http://code.google.com/p/android/issues/detail?id=1780
 
             if ($().dialog) {
@@ -145,7 +145,7 @@ $.extend({
         }
 
         //wire up a jquery dialog to display the preparing message if specified
-        var $preparingDialog = null;
+        var $preparingDialog;
         if (settings.preparingMessageHtml) {
 
             $preparingDialog = $("<div>").html(settings.preparingMessageHtml).dialog(settings.dialogOptions);
@@ -209,7 +209,7 @@ $.extend({
 
                 var qsStart = fileUrl.indexOf('?');
 
-                if (qsStart != -1) {
+                if (qsStart !== -1) {
                     //we have a querystring in the url
 
                     if (fileUrl.substring(fileUrl.length - 1) !== "&") {
@@ -253,11 +253,10 @@ $.extend({
                     var kvp = this.split("=");
 
                     var key = settings.encodeHTMLEntities ? htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[0])) : decodeURIComponent(kvp[0]);
-                    if (!key) return;
-                    var value = kvp[1] || '';
-                    value = settings.encodeHTMLEntities ? htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[1])) : decodeURIComponent(kvp[1]);
-
-                    formInnerHtml += '<input type="hidden" name="' + key + '" value="' + value + '" />';
+                    if (key) {
+                        var value = settings.encodeHTMLEntities ? htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[1])) : decodeURIComponent(kvp[1]);
+                        formInnerHtml += '<input type="hidden" name="' + key + '" value="' + value + '" />';
+                    }
                 });
             }
 
@@ -305,8 +304,7 @@ $.extend({
                 internalCallbacks.onSuccess(fileUrl);
 
                 //remove the cookie and iframe
-                var date = new Date(1000);
-                document.cookie = settings.cookieName + "=; expires=" + date.toUTCString() + "; path=" + settings.cookiePath;
+                document.cookie = settings.cookieName + "=; expires=" + new Date(1000).toUTCString() + "; path=" + settings.cookiePath;
 
                 cleanUp(false);
 
@@ -320,21 +318,16 @@ $.extend({
                 //has an error occured?
                 try {
 
-                    var formDoc;
-                    if (downloadWindow) {
-                        formDoc = downloadWindow.document;
-                    } else {
-                        formDoc = getiframeDocument($iframe);
-                    }
-
-                    if (formDoc && formDoc.body != null && formDoc.body.innerHTML.length > 0) {
+                    var formDoc = downloadWindow ? downloadWindow.document : getiframeDocument($iframe);
+                    
+                    if (formDoc && formDoc.body != null && formDoc.body.innerHTML.length) {
 
                         var isFailure = true;
 
-                        if ($form && $form.length > 0) {
+                        if ($form && $form.length) {
                             var $contents = $(formDoc.body).contents().first();
 
-                            if ($contents.length > 0 && $contents[0] === $form[0]) {
+                            if ($contents.length && $contents[0] === $form[0]) {
                                 isFailure = false;
                             }
                         }
@@ -384,11 +377,9 @@ $.extend({
                     }
 
                     if (isIos) {
+                        downloadWindow.focus(); //ios safari bug doesn't allow a window to be closed unless it is focused
                         if (isFailure) {
-                            downloadWindow.focus(); //ios safari bug doesn't allow a window to be closed unless it is focused
                             downloadWindow.close();
-                        } else {
-                            downloadWindow.focus();
                         }
                     }
                 }
@@ -396,20 +387,24 @@ $.extend({
             }, 0);
         }
 
+
+        var htmlSpecialCharsRegEx = /[<>&\r\n"']/gm;
+        var htmlSpecialCharsPlaceHolders = {
+            '<': 'lt;',
+            '>': 'gt;',
+            '&': 'amp;',
+            '\r': "#13;",
+            '\n': "#10;",
+            '"': 'quot;',
+            "'": 'apos;' /*single quotes just to be safe*/
+        };
+
         function htmlSpecialCharsEntityEncode(str) {
-            return str.replace(/[<>&\r\n"']/gm, function(match) {
-        		return '&' + {
-        			'<': 'lt;',
-        			'>': 'gt;',
-        			'&': 'amp;',
-        			'\r': "#13;",
-        			'\n': "#10;",
-        			'"': 'quot;',
-        			"'": 'apos;' /*single quotes just to be safe*/
-        		}[match];
-        	});
+            return str.replace(htmlSpecialCharsRegEx, function(match) {
+                return '&' + htmlSpecialCharsPlaceHolders[match];
+            });
         }
     }
 });
 
-})(jQuery);
+})(jQuery, this);
