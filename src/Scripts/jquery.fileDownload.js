@@ -9,7 +9,7 @@
 *   http://www.opensource.org/licenses/mit-license.php
 */
 
-(function($){
+(function($, window){
 
 $.extend({
     //
@@ -120,7 +120,7 @@ $.extend({
 
             isIos = true;
 
-        } else if (userAgent.indexOf('android') != -1) {
+        } else if (userAgent.indexOf('android') !== -1) {
 
             isAndroid = true;
 
@@ -132,7 +132,7 @@ $.extend({
 
         var httpMethodUpper = settings.httpMethod.toUpperCase();
 
-        if (isAndroid && httpMethodUpper != "GET") {
+        if (isAndroid && httpMethodUpper !== "GET") {
             //the stock android browser straight up doesn't support file downloads initiated by non GET requests: http://code.google.com/p/android/issues/detail?id=1780
 
             if ($().dialog) {
@@ -209,7 +209,7 @@ $.extend({
 
                 var qsStart = fileUrl.indexOf('?');
 
-                if (qsStart != -1) {
+                if (qsStart !== -1) {
                     //we have a querystring in the url
 
                     if (fileUrl.substring(fileUrl.length - 1) !== "&") {
@@ -304,8 +304,7 @@ $.extend({
                 internalCallbacks.onSuccess(fileUrl);
 
                 //remove the cookie and iframe
-                var date = new Date(1000);
-                document.cookie = settings.cookieName + "=; expires=" + date.toUTCString() + "; path=" + settings.cookiePath;
+                document.cookie = settings.cookieName + "=; expires=" + new Date(1000).toUTCString() + "; path=" + settings.cookiePath;
 
                 cleanUp(false);
 
@@ -319,21 +318,16 @@ $.extend({
                 //has an error occured?
                 try {
 
-                    var formDoc;
-                    if (downloadWindow) {
-                        formDoc = downloadWindow.document;
-                    } else {
-                        formDoc = getiframeDocument($iframe);
-                    }
-
-                    if (formDoc && formDoc.body != null && formDoc.body.innerHTML.length > 0) {
+                    var formDoc = downloadWindow ? downloadWindow.document : getiframeDocument($iframe);
+                    
+                    if (formDoc && formDoc.body != null && formDoc.body.innerHTML.length) {
 
                         var isFailure = true;
 
-                        if ($form && $form.length > 0) {
+                        if ($form && $form.length) {
                             var $contents = $(formDoc.body).contents().first();
 
-                            if ($contents.length > 0 && $contents[0] === $form[0]) {
+                            if ($contents.length && $contents[0] === $form[0]) {
                                 isFailure = false;
                             }
                         }
@@ -407,10 +401,10 @@ $.extend({
 
         function htmlSpecialCharsEntityEncode(str) {
             return str.replace(htmlSpecialCharsRegEx, function(match) {
-            	return '&' + htmlSpecialCharsPlaceHolders[match];
-        	});
+                return '&' + htmlSpecialCharsPlaceHolders[match];
+            });
         }
     }
 });
 
-})(jQuery);
+})(jQuery, this);
