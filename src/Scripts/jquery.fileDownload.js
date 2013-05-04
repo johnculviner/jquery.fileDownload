@@ -1,5 +1,5 @@
 ﻿/*
-* jQuery File Download Plugin v1.3.3
+* jQuery File Download Plugin v1.3.4
 *
 * http://www.johnculviner.com
 *
@@ -45,6 +45,13 @@ $.extend({
             //Requires jQuery UI: options to pass into jQuery UI Dialog
             //
             dialogOptions: { modal: true },
+
+            //
+            //a function to call while the dowload is being prepared before the browser's dialog appears
+            //Args:
+            //  url - the original url attempted
+            //
+            prepareCallback: function (url) { },
 
             //
             //a function to call after a file download dialog/ribbon has appeared
@@ -144,15 +151,24 @@ $.extend({
             return;
         }
 
-        //wire up a jquery dialog to display the preparing message if specified
         var $preparingDialog = null;
-        if (settings.preparingMessageHtml) {
-
-            $preparingDialog = $("<div>").html(settings.preparingMessageHtml).dialog(settings.dialogOptions);
-
-        }
 
         var internalCallbacks = {
+
+            onPrepare: function (url) {
+
+                //wire up a jquery dialog to display the preparing message if specified
+                if (settings.preparingMessageHtml) {
+
+                    $preparingDialog = $("<div>").html(settings.preparingMessageHtml).dialog(settings.dialogOptions);
+
+                } else if (settings.prepareCallback) {
+
+                    settings.prepareCallback(url);
+
+                }
+
+            },
 
             onSuccess: function (url) {
 
@@ -190,6 +206,7 @@ $.extend({
             }
         };
 
+        internalCallbacks.onPrepare(fileUrl);
 
         //make settings.data a param string if it exists and isn't already
         if (settings.data !== null && typeof settings.data !== "string") {
