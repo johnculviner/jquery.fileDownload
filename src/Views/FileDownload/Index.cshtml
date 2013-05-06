@@ -21,6 +21,8 @@
 <script type="text/javascript">
     $(function () {
 
+
+
         //
         // Simple rich user experience - jquery.fileDownload.js & jQuery UI Dialog
         // uses the optional "options" argument
@@ -32,11 +34,23 @@
         //          works for possible dynamic manipulation in the entire DOM
         //
         $(document).on("click", "a.fileDownloadSimpleRichExperience", function () {
-            $.fileDownload($(this).attr('href'), {
+            $.fileDownload($(this).prop('href'), {
                 preparingMessageHtml: "We are preparing your report, please wait...",
                 failMessageHtml: "There was a problem generating your report, please try again."
             });
             return false; //this is critical to stop the click event which will trigger a normal file download!
+        });
+
+        //
+        //With jquery.fileDownload.js
+        //Promise use allows for a very customized experience easily
+        //
+        $(document).on("click", "a.fileDownloadPromise", function () {
+            $.fileDownload($(this).prop('href'))
+                .done(function () { alert('File download a success!'); })
+                .fail(function () { alert('File download failed!'); });
+
+            return false; //this is critical to stop the click event which will trigger a normal file download
         });
 
 
@@ -51,7 +65,7 @@
         //          works for possible dynamic manipulation in the entire DOM
         //
         $(document).on("submit", "form.fileDownloadForm", function (e) {
-            $.fileDownload($(this).attr('action'), {
+            $.fileDownload($(this).prop('action'), {
                 preparingMessageHtml: "We are preparing your report, please wait...",
                 failMessageHtml: "There was a problem generating your report, please try again.",
                 httpMethod: "POST",
@@ -77,7 +91,7 @@
 
                 $preparingFileModal.dialog({ modal: true });
 
-                $.fileDownload($(this).attr('href'), {
+                $.fileDownload($(this).prop('href'), {
                     successCallback: function (url) {
 
                         $preparingFileModal.dialog('close');
@@ -90,18 +104,6 @@
                 });
                 return false; //this is critical to stop the click event which will trigger a normal file download!
             });
-        });
-
-
-
-        //
-        //With jquery.fileDownload.js
-        //bare-bones stock setup
-        //
-        $(document).on("click", "a.fileDownloadStock", function () {
-            var linkHref = $(this).attr('href');
-            $.fileDownload(linkHref);
-            return false; //this is critical to stop the click event which will trigger a normal file download!
         });
 
     })
@@ -162,11 +164,33 @@ With jquery.fileDownload.js, uses the optional "options" argument to create a si
         //          works for possible dynamic manipulation in the entire DOM
         //
         $(document).on("click", "a.fileDownloadSimpleRichExperience", function () {
-            $.fileDownload($(this).attr('href'), {
+            $.fileDownload($(this).prop('href'), {
                 preparingMessageHtml: "We are preparing your report, please wait...",
                 failMessageHtml: "There was a problem generating your report, please try again."
             });
             return false; //this is critical to stop the click event which will trigger a normal file download!
+        });
+    </pre>
+</div>
+
+
+<h2>Custom use with Promises - jquery.fileDownload.js</h2>
+With jquery.fileDownload.js, uses promises to allow for a very customized experience easily<br/><br/>
+@ReportTable("fileDownloadPromise")
+
+<a class="toggle-source">Toggle Source</a>
+<div class="source">
+    <pre class="brush: js;">
+        //
+        //With jquery.fileDownload.js
+        //custom use with promises
+        //
+        $(document).on("click", "a.fileDownloadPromise", function () {
+            $.fileDownload($(this).prop('href'))
+                .done(function () { alert('File download a success!'); })
+                .fail(function () { alert('File download failed!'); });
+
+            return false; //this is critical to stop the click event which will trigger a normal file download
         });
     </pre>
 </div>
@@ -208,7 +232,7 @@ With jquery.fileDownload.js, uses data "options" argument to create a POST reque
         //          works for possible dynamic manipulation in the entire DOM
         //
         $(document).on("submit", "form.fileDownloadForm", function (e) {
-            $.fileDownload($(this).attr('action'), {
+            $.fileDownload($(this).prop('action'), {
                 preparingMessageHtml: "We are preparing your report, please wait...",
                 failMessageHtml: "There was a problem generating your report, please try again.",
                 httpMethod: "POST",
@@ -243,7 +267,7 @@ With jquery.fileDownload.js, uses the optional "options" argument to create a cu
 
                 $preparingFileModal.dialog({ modal: true });
 
-                $.fileDownload($(this).attr('href'), {
+                $.fileDownload($(this).prop('href'), {
                     successCallback: function (url) {
 
                         $preparingFileModal.dialog('close');
@@ -271,27 +295,6 @@ With jquery.fileDownload.js, uses the optional "options" argument to create a cu
         </div>
     </pre>
 
-</div>
-
-
-
-<h2>Barebones - jquery.fileDownload.js</h2>
-With jquery.fileDownload.js, bare-bones stock setup<br/><br/>
-@ReportTable("fileDownloadStock")
-
-<a class="toggle-source">Toggle Source</a>
-<div class="source">
-    <pre class="brush: js;">
-        //
-        //With jquery.fileDownload.js
-        //bare-bones stock setup
-        //
-        $(document).on("click", "a.fileDownloadStock", function () {
-            var linkHref = $(this).attr('href');
-            $.fileDownload(linkHref);
-            return false; //this is critical to stop the click event which will trigger a normal file download!
-        });
-    </pre>
 </div>
 
 

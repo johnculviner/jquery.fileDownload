@@ -1,5 +1,8 @@
 jQuery File Download is a cross server platform compatible jQuery plugin that allows for an Ajax-like file download experience that isn't normally possible using the web.
 
+Source here:
+https://github.com/johnculviner/jquery.fileDownload/blob/master/src/Scripts/jquery.fileDownload.js
+
 ### Requirements
 * jQuery 1.6+
 
