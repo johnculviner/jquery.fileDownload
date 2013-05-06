@@ -1,5 +1,5 @@
 ﻿/*
-* jQuery File Download Plugin v1.3.4
+* jQuery File Download Plugin v1.4.0
 *
 * http://www.johnculviner.com
 *
@@ -16,10 +16,6 @@ $.extend({
     //$.fileDownload('/path/to/url/', options)
     //  see directly below for possible 'options'
     fileDownload: function (fileUrl, options) {
-
-        var defaultFailCallback = function (responseHtml, url) {
-            alert("A file download error has occurred, please try again.");
-        };
 
         //provide some reasonable defaults to any unspecified options below
         var settings = $.extend({
@@ -68,7 +64,7 @@ $.extend({
             //                      server's error message with a "helpful" IE built in message
             //  url             - the original url attempted
             //
-            failCallback: defaultFailCallback,
+            failCallback: function (responseHtml, url) { },
 
             //
             // the HTTP method to use. Defaults to "GET".
@@ -113,8 +109,10 @@ $.extend({
             //It is recommended that on the server, htmlentity decoding is done irrespective.
             //
             encodeHTMLEntities: true
+            
         }, options);
 
+        var deferred = new $.Deferred();
 
         //Setup mobile browser detection: Partial credit: http://detectmobilebrowser.com/
         var userAgent = (navigator.userAgent || navigator.vendor || window.opera).toLowerCase();
@@ -148,7 +146,7 @@ $.extend({
                 alert(settings.androidPostUnsupportedMessageHtml);
             }
 
-            return;
+            return deferred.reject();
         }
 
         var $preparingDialog = null;
@@ -179,6 +177,7 @@ $.extend({
 
                 settings.successCallback(url);
 
+                deferred.resolve(url);
             },
 
             onFail: function (responseHtml, url) {
@@ -190,19 +189,12 @@ $.extend({
 
                 //wire up a jquery dialog to display the fail message if specified
                 if (settings.failMessageHtml) {
-
                     $("<div>").html(settings.failMessageHtml).dialog(settings.dialogOptions);
-
-                    //only run the fallcallback if the developer specified something different than default
-                    //otherwise we would see two messages about how the file download failed
-                    if (settings.failCallback != defaultFailCallback) {
-                        settings.failCallback(responseHtml, url);
-                    }
-
-                } else {
-
-                    settings.failCallback(responseHtml, url);
                 }
+
+                settings.failCallback(responseHtml, url);
+                
+                deferred.reject(responseHtml, url);
             }
         };
 
@@ -255,7 +247,7 @@ $.extend({
                 //create a temporary iframe that is used to request the fileUrl as a GET request
                 $iframe = $("<iframe>")
                     .hide()
-                    .attr("src", fileUrl)
+                    .prop("src", fileUrl)
                     .appendTo("body");
             }
 
@@ -281,8 +273,8 @@ $.extend({
 
                 $form = $("<form>").appendTo("body");
                 $form.hide()
-                    .attr('method', settings.httpMethod)
-                    .attr('action', fileUrl)
+                    .prop('method', settings.httpMethod)
+                    .prop('action', fileUrl)
                     .html(formInnerHtml);
 
             } else {
@@ -421,6 +413,8 @@ $.extend({
                 return '&' + htmlSpecialCharsPlaceHolders[match];
         	});
         }
+
+        return deferred.promise();
     }
 });
 

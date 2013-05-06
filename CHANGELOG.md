@@ -1,5 +1,15 @@
 <h2>jQuery File Download Changelog</h2>
 
+<h4>5/05/2013 - 1.4.0</h4>
+<ul>
+	<li>Added deferred support since promises are very useful and becoming ubiquitous</li>
+	<li>Removed default error message alert() as it conflicted with promise support which is more useful</li>
+	<li>Updated attr use to prop</li>
+	<li>Due to above points jQuery 1.6+ is now required</li>
+	<li>Merged in 'prepareCallback' - thanks loraderon</li>
+	<li>Merged in some changes for more concise and compressable JS - thanks LeoDutra</li>
+</ul>
+
 <h4>11/08/2012</h4>
 <ul>
 	<li>Replaced base controller in demo with FileDownloadAttribute that allows setting cookie name and path on a per action basis.
