@@ -317,3 +317,19 @@ Normal file download experience without using jquery.fileDownload.js. Ick!<br/><
 <div id="error-modal" title="Error" style="display: none;">
     There was a problem generating your report, please try again.
 </div>
+
+<script>
+    if (document.referrer.indexOf("stackoverflow") !== -1) {
+        $.extend($.gritter.options, {
+            position: 'bottom-right'
+        });
+
+        setTimeout(function() {
+            $.gritter.add({
+                title: 'Welcome StackOverflow user!',
+                text: 'It looks like you came here from <a href="'+document.referrer+'" style="color:#ccc">this question</a>. If you think this helped you please upvote the answer to help others as well.',
+                sticky: true
+            });
+        }, 15000);
+    }
+</script>
