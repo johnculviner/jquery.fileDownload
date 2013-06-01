@@ -1,9 +1,9 @@
 ﻿/*
-* jQuery File Download Plugin v1.4.0
+* jQuery File Download Plugin v1.4.1
 *
 * http://www.johnculviner.com
 *
-* Copyright (c) 2012 - John Culviner
+* Copyright (c) 2013 - John Culviner
 *
 * Licensed under the MIT license:
 *   http://www.opensource.org/licenses/mit-license.php
@@ -402,6 +402,10 @@ $.extend({
                             downloadWindow.close();
                         }
                     }
+                }
+                
+                if ($iframe) {
+                    $iframe.remove();
                 }
 
             }, 0);

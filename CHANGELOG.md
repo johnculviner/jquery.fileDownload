@@ -1,5 +1,11 @@
 <h2>jQuery File Download Changelog</h2>
 
+<h4>6/01/2013 - 1.4.1</h4>
+<ul>
+	<li>Merged pull fixing constant location. Thanks Djemo!</li>
+	<li>Added iframe removal after success/failure of download. Thanks for the idea joshua5822!</li>
+</ul>
+
 <h4>5/05/2013 - 1.4.0</h4>
 <ul>
 	<li>Added deferred support since promises are very useful and becoming ubiquitous</li>
