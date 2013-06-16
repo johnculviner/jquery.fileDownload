@@ -94,12 +94,6 @@ $.extend({
             checkInterval: 100,
 
             //
-            // A period in milliseconds after which the download should be considered failed and polling will cease
-            // The default of 0 means the timeout will be ignored
-            //
-            timeout: 0
-
-            //
             //the cookie name to indicate if a file download has occured
             //
             cookieName: "fileDownload",
@@ -226,8 +220,7 @@ $.extend({
         var $iframe,
             downloadWindow,
             formDoc,
-            $form,
-            startTime;
+            $form;
 
         if (httpMethodUpper === "GET") {
 
@@ -317,10 +310,10 @@ $.extend({
             $form.submit();
         }
 
-        startTime = Date.getTime();
 
         //check if the file download has completed every checkInterval ms
         setTimeout(checkFileDownloadComplete, settings.checkInterval);
+
 
         function checkFileDownloadComplete() {
 
@@ -347,8 +340,7 @@ $.extend({
 
                     var formDoc = downloadWindow ? downloadWindow.document : getiframeDocument($iframe);
 
-                    if ( (formDoc && formDoc.body != null && formDoc.body.innerHTML.length)
-                        || (timeout != 0 && startTime + settings.timeout > Date.getTime()) ) {
+                    if (formDoc && formDoc.body != null && formDoc.body.innerHTML.length) {
 
                         var isFailure = true;
 
@@ -379,6 +371,7 @@ $.extend({
                     return;
                 }
             }
+
 
             //keep checking...
             setTimeout(checkFileDownloadComplete, settings.checkInterval);
