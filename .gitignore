@@ -8,8 +8,7 @@
 # Build results
 [Dd]ebug/
 [Rr]elease/
-src/*/[Bb]in/
-test/*/[Bb]in/
+[Bb]in/
 [Oo]bj/
 *.obj
 .builds
