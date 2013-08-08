@@ -404,9 +404,11 @@ $.extend({
                     }
                 }
                 
-                if ($iframe) {
-                    $iframe.remove();
-                }
+                //iframe cleanup appears to randomly cause the download to fail
+                //not doing it seems better than failure...
+                //if ($iframe) {
+                //    $iframe.remove();
+                //}
 
             }, 0);
         }
