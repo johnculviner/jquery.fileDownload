@@ -23,105 +23,110 @@
 	};
 
 $.extend({
+	defaultSettings: {
+
+		//
+		//Requires jQuery UI: provide a message to display to the user when the file download is being prepared before the browser's dialog appears
+		//
+		preparingMessageHtml: null,
+
+		//
+		//Requires jQuery UI: provide a message to display to the user when a file download fails
+		//
+		failMessageHtml: null,
+
+		//
+		//the stock android browser straight up doesn't support file downloads initiated by a non GET: http://code.google.com/p/android/issues/detail?id=1780
+		//specify a message here to display if a user tries with an android browser
+		//if jQuery UI is installed this will be a dialog, otherwise it will be an alert
+		//
+		androidPostUnsupportedMessageHtml: "Unfortunately your Android browser doesn't support this type of file download. Please try again with a different browser.",
+
+		//
+		//Requires jQuery UI: options to pass into jQuery UI Dialog
+		//
+		dialogOptions: { modal: true },
+
+		//
+		//a function to call while the dowload is being prepared before the browser's dialog appears
+		//Args:
+		//  url - the original url attempted
+		//
+		prepareCallback: function (url) { },
+
+		//
+		//a function to call after a file download dialog/ribbon has appeared
+		//Args:
+		//  url - the original url attempted
+		//
+		successCallback: function (url) { },
+
+		//
+		//a function to call after a file download dialog/ribbon has appeared
+		//Args:
+		//  responseHtml    - the html that came back in response to the file download. this won't necessarily come back depending on the browser.
+		//                      in less than IE9 a cross domain error occurs because 500+ errors cause a cross domain issue due to IE subbing out the
+		//                      server's error message with a "helpful" IE built in message
+		//  url             - the original url attempted
+		//
+		failCallback: function (responseHtml, url) { },
+
+		//
+		// the HTTP method to use. Defaults to "GET".
+		//
+		httpMethod: "GET",
+
+		//
+		// if specified will perform a "httpMethod" request to the specified 'fileUrl' using the specified data.
+		// data must be an object (which will be $.param serialized) or already a key=value param string
+		//
+		data: null,
+
+		//
+		//a period in milliseconds to poll to determine if a successful file download has occured or not
+		//
+		checkInterval: 100,
+
+		//
+		//the cookie name to indicate if a file download has occured
+		//
+		cookieName: "fileDownload",
+
+		//
+		//the cookie value for the above name to indicate that a file download has occured
+		//
+		cookieValue: "true",
+
+		//
+		//the cookie path for above name value pair
+		//
+		cookiePath: "/",
+
+		//
+		//the title for the popup second window as a download is processing in the case of a mobile browser
+		//
+		popupWindowTitle: "Initiating file download...",
+
+		//
+		//Functionality to encode HTML entities for a POST, need this if data is an object with properties whose values contains strings with quotation marks.
+		//HTML entity encoding is done by replacing all &,<,>,',",\r,\n characters.
+		//Note that some browsers will POST the string htmlentity-encoded whilst others will decode it before POSTing.
+		//It is recommended that on the server, htmlentity decoding is done irrespective.
+		//
+		encodeHTMLEntities: true
+		
+	},
+	
+	fileDownloadSetup: function( settings ) {
+		$.extend( defaultSettings, settings );
+	},
+	
     //
     //$.fileDownload('/path/to/url/', options)
     //  see directly below for possible 'options'
     fileDownload: function (fileUrl, options) {
-
         //provide some reasonable defaults to any unspecified options below
-        var settings = $.extend({
-
-            //
-            //Requires jQuery UI: provide a message to display to the user when the file download is being prepared before the browser's dialog appears
-            //
-            preparingMessageHtml: null,
-
-            //
-            //Requires jQuery UI: provide a message to display to the user when a file download fails
-            //
-            failMessageHtml: null,
-
-            //
-            //the stock android browser straight up doesn't support file downloads initiated by a non GET: http://code.google.com/p/android/issues/detail?id=1780
-            //specify a message here to display if a user tries with an android browser
-            //if jQuery UI is installed this will be a dialog, otherwise it will be an alert
-            //
-            androidPostUnsupportedMessageHtml: "Unfortunately your Android browser doesn't support this type of file download. Please try again with a different browser.",
-
-            //
-            //Requires jQuery UI: options to pass into jQuery UI Dialog
-            //
-            dialogOptions: { modal: true },
-
-            //
-            //a function to call while the dowload is being prepared before the browser's dialog appears
-            //Args:
-            //  url - the original url attempted
-            //
-            prepareCallback: function (url) { },
-
-            //
-            //a function to call after a file download dialog/ribbon has appeared
-            //Args:
-            //  url - the original url attempted
-            //
-            successCallback: function (url) { },
-
-            //
-            //a function to call after a file download dialog/ribbon has appeared
-            //Args:
-            //  responseHtml    - the html that came back in response to the file download. this won't necessarily come back depending on the browser.
-            //                      in less than IE9 a cross domain error occurs because 500+ errors cause a cross domain issue due to IE subbing out the
-            //                      server's error message with a "helpful" IE built in message
-            //  url             - the original url attempted
-            //
-            failCallback: function (responseHtml, url) { },
-
-            //
-            // the HTTP method to use. Defaults to "GET".
-            //
-            httpMethod: "GET",
-
-            //
-            // if specified will perform a "httpMethod" request to the specified 'fileUrl' using the specified data.
-            // data must be an object (which will be $.param serialized) or already a key=value param string
-            //
-            data: null,
-
-            //
-            //a period in milliseconds to poll to determine if a successful file download has occured or not
-            //
-            checkInterval: 100,
-
-            //
-            //the cookie name to indicate if a file download has occured
-            //
-            cookieName: "fileDownload",
-
-            //
-            //the cookie value for the above name to indicate that a file download has occured
-            //
-            cookieValue: "true",
-
-            //
-            //the cookie path for above name value pair
-            //
-            cookiePath: "/",
-
-            //
-            //the title for the popup second window as a download is processing in the case of a mobile browser
-            //
-            popupWindowTitle: "Initiating file download...",
-
-            //
-            //Functionality to encode HTML entities for a POST, need this if data is an object with properties whose values contains strings with quotation marks.
-            //HTML entity encoding is done by replacing all &,<,>,',",\r,\n characters.
-            //Note that some browsers will POST the string htmlentity-encoded whilst others will decode it before POSTing.
-            //It is recommended that on the server, htmlentity decoding is done irrespective.
-            //
-            encodeHTMLEntities: true
-            
-        }, options);
+        var settings = $.extend(defaultSettings, options);
 
         var deferred = new $.Deferred();
 
