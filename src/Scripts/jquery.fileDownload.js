@@ -25,9 +25,8 @@
 				'"': 'quot;',
 				"'": 'apos;' /*single quotes just to be safe*/
 	};
-
-$.extend({
-        defaultSettings: {
+	var nextAutoFrameIdNumber = 1;
+        var defaultSettings = {
             //
             //Requires jQuery UI: provide a message to display to the user when the file download is being prepared before the browser's dialog appears
             //
@@ -132,10 +131,11 @@ $.extend({
 
             //set the timeout of cleanUp function, the value should > 0 for browser latency
             timeout: 10
-        },
-        
+        };
+
+$.extend({        
         fileDownloadSetup: function(settings) {
-            $.extend(defaultSettings, settings);
+            defaultSettings = $.extend(defaultSettings, settings);
         },
         
         //
