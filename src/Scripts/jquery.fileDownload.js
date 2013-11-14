@@ -1,5 +1,9 @@
-﻿/*
-* jQuery File Download Plugin v1.4.2 
+/*
+* jQuery File Download Plugin v1.4.2.1 
+* Base 1.4.2 plus:
+*  Create $.fileDownloadSetup to support default configurations https://github.com/austinjones/jquery.fileDownload/commit/78da2fa10c9c4d72a6d234141c18a3684ef4af28
+*  Return fail reason cookie https://github.com/mattiamascia/jquery.fileDownload/commit/974a8f1f04a00440fbf38c832c43e74b2c7499d2
+*  FrameId support for multiple downloads https://github.com/mattiamascia/jquery.fileDownload/commit/974a8f1f04a00440fbf38c832c43e74b2c7499d2
 *
 * http://www.johnculviner.com
 *
@@ -23,14 +27,7 @@
 	};
 
 $.extend({
-    //
-    //$.fileDownload('/path/to/url/', options)
-    //  see directly below for possible 'options'
-    fileDownload: function (fileUrl, options) {
-
-        //provide some reasonable defaults to any unspecified options below
-        var settings = $.extend({
-
+        defaultSettings: {
             //
             //Requires jQuery UI: provide a message to display to the user when the file download is being prepared before the browser's dialog appears
             //
@@ -75,7 +72,8 @@ $.extend({
             //                      server's error message with a "helpful" IE built in message
             //  url             - the original url attempted
             //
-            failCallback: function (responseHtml, url) { },
+            //  failReason      - the reason provided within the response cookie
+            failCallback: function (responseHtml, url, failReason) { },
 
             //
             // the HTTP method to use. Defaults to "GET".
@@ -104,6 +102,11 @@ $.extend({
             cookieValue: "true",
 
             //
+            //the cookie name to provide a reason if failure
+            //
+            cookieNameFailReason: "fileDownloadFailureReason",
+
+            //
             //the cookie path for above name value pair
             //
             cookiePath: "/",
@@ -119,9 +122,29 @@ $.extend({
             //Note that some browsers will POST the string htmlentity-encoded whilst others will decode it before POSTing.
             //It is recommended that on the server, htmlentity decoding is done irrespective.
             //
-            encodeHTMLEntities: true
-            
-        }, options);
+            encodeHTMLEntities: true,
+
+            // If you have many download link in your page, you must use it to avoid concurrent problem.
+            frameId: undefined,
+
+            //If you want the frames to automatically be assigned a new id each time if frameId is undefined
+            useAutoFrameId: false,
+
+            //set the timeout of cleanUp function, the value should > 0 for browser latency
+            timeout: 10
+        },
+        
+        fileDownloadSetup: function(settings) {
+            $.extend(defaultSettings, settings);
+        },
+        
+        //
+        //$.fileDownload('/path/to/url/', options)
+        //  see directly below for possible 'options'
+        fileDownload: function(fileUrl, options) {
+
+        //provide some reasonable defaults to any unspecified options below
+        var settings = $.extend(defaultSettings, options);
 
         var deferred = new $.Deferred();
 
@@ -191,7 +214,7 @@ $.extend({
                 deferred.resolve(url);
             },
 
-            onFail: function (responseHtml, url) {
+            onFail: function (responseHtml, url, failReason) {
 
                 //remove the perparing message if it was specified
                 if ($preparingDialog) {
@@ -203,8 +226,8 @@ $.extend({
                     $("<div>").html(settings.failMessageHtml).dialog(settings.dialogOptions);
                 }
 
-                settings.failCallback(responseHtml, url);
-                
+                settings.failCallback(responseHtml, url, failReason);
+
                 deferred.reject(responseHtml, url);
             }
         };
@@ -258,8 +281,17 @@ $.extend({
                 //create a temporary iframe that is used to request the fileUrl as a GET request
                 $iframe = $("<iframe>")
                     .hide()
-                    .prop("src", fileUrl)
-                    .appendTo("body");
+                    .prop("src", fileUrl);
+
+                if (settings.frameId) {
+                    $iframe.attr("id", settings.frameId);
+                } else if (settings.useAutoFrameId) {
+                    settings.frameId = "fileDownload_autoFrameId_" + nextAutoFrameIdNumber;
+                    $iframe.attr("id", settings.frameId);
+                    nextAutoFrameIdNumber++;
+                }
+                //after all properties are set, add it to the document
+                $iframe.appendTo("body");
             }
 
         } else {
@@ -275,7 +307,7 @@ $.extend({
                     var key = settings.encodeHTMLEntities ? htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[0])) : decodeURIComponent(kvp[0]);
                     if (key) {
                         var value = settings.encodeHTMLEntities ? htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[1])) : decodeURIComponent(kvp[1]);
-                    formInnerHtml += '<input type="hidden" name="' + key + '" value="' + value + '" />';
+                        formInnerHtml += '<input type="hidden" name="' + key + '" value="' + value + '" />';
                     }
                 });
             }
@@ -300,6 +332,13 @@ $.extend({
                 } else {
 
                     $iframe = $("<iframe style='display: none' src='about:blank'></iframe>").appendTo("body");
+                    if (settings.frameId) {
+                        $iframe.attr("id", settings.frameId);
+                    } else if (settings.useAutoFrameId) {
+                        settings.frameId = "fileDownload_autoFrameId_" + nextAutoFrameIdNumber;
+                        $iframe.attr("id", settings.frameId);
+                        nextAutoFrameIdNumber++;
+                    }
                     formDoc = getiframeDocument($iframe);
                 }
 
@@ -353,7 +392,21 @@ $.extend({
                         }
 
                         if (isFailure) {
-                            internalCallbacks.onFail(formDoc.body.innerHTML, fileUrl);
+                            var failreasonIndex = document.cookie.indexOf(settings.cookieNameFailReason);
+                            var failReason = undefined;
+                            if (failreasonIndex != -1) {
+                                var i, x, y, ARRcookies = document.cookie.split(";");
+                                for (i = 0; i < ARRcookies.length; i++) {
+                                    x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+                                    y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+                                    x = x.replace(/^\s+|\s+$/g, "");
+                                    if (x === settings.cookieNameFailReason) {
+                                        failReason = unescape(y);
+                                    }
+                                }
+                            }
+
+                            internalCallbacks.onFail(formDoc.body.innerHTML, fileUrl, failReason);
 
                             cleanUp(true);
 
@@ -364,7 +417,7 @@ $.extend({
                 catch (err) {
 
                     //500 error less than IE9
-                    internalCallbacks.onFail('', fileUrl);
+                    internalCallbacks.onFail('', fileUrl, '');
 
                     cleanUp(true);
 
@@ -403,14 +456,17 @@ $.extend({
                         }
                     }
                 }
-                
+
+                if (settings.frameId && $('#' + settings.frameId).length > 0)
+                    $('#' + settings.frameId).remove();
+
                 //iframe cleanup appears to randomly cause the download to fail
                 //not doing it seems better than failure...
                 //if ($iframe) {
                 //    $iframe.remove();
                 //}
 
-            }, 0);
+            }, settings.timeout); //browser latency
         }
 
 
