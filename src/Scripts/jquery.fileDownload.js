@@ -1,4 +1,4 @@
-﻿/*
+/*
 * jQuery File Download Plugin v1.4.2 
 *
 * http://www.johnculviner.com
@@ -7,6 +7,11 @@
 *
 * Licensed under the MIT license:
 *   http://www.opensource.org/licenses/mit-license.php
+*
+* !!!!NOTE!!!!
+* You must also write a cookie in conjunction with using this plugin as mentioned in the orignal post:
+* http://johnculviner.com/jquery-file-download-plugin-for-ajax-like-feature-rich-file-downloads/
+* !!!!NOTE!!!!
 */
 
 (function($, window){
