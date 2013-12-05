@@ -1,5 +1,5 @@
 /*
-* jQuery File Download Plugin v1.4.2 
+* jQuery File Download Plugin v1.4.2
 *
 * http://www.johnculviner.com
 *
@@ -15,26 +15,29 @@
 */
 
 (function($, window){
-	// i'll just put them here to get evaluated on script load
-	var htmlSpecialCharsRegEx = /[<>&\r\n"']/gm;
-	var htmlSpecialCharsPlaceHolders = {
-				'<': 'lt;',
-				'>': 'gt;',
-				'&': 'amp;',
-				'\r': "#13;",
-				'\n': "#10;",
-				'"': 'quot;',
-				"'": 'apos;' /*single quotes just to be safe*/
-	};
+  // i'll just put them here to get evaluated on script load
+  var htmlSpecialCharsRegEx = /[<>&\r\n"']/gm;
+  var htmlSpecialCharsPlaceHolders = {
+        '<': 'lt;',
+        '>': 'gt;',
+        '&': 'amp;',
+        '\r': "#13;",
+        '\n': "#10;",
+        '"': 'quot;',
+        "'": 'apos;' /*single quotes just to be safe*/
+  };
 
 $.extend({
     //
     //$.fileDownload('/path/to/url/', options)
     //  see directly below for possible 'options'
-    fileDownload: function (fileUrl, options) {
+    fileDownload: function (options) {
 
         //provide some reasonable defaults to any unspecified options below
         var settings = $.extend({
+
+            //default url
+            url: '/',
 
             //
             //Requires jQuery UI: provide a message to display to the user when the file download is being prepared before the browser's dialog appears
@@ -70,7 +73,7 @@ $.extend({
             //Args:
             //  url - the original url attempted
             //
-            successCallback: function (url) { },
+            success: function (url) { },
 
             //
             //a function to call after a file download dialog/ribbon has appeared
@@ -80,7 +83,10 @@ $.extend({
             //                      server's error message with a "helpful" IE built in message
             //  url             - the original url attempted
             //
-            failCallback: function (responseHtml, url) { },
+            error: function (responseHtml, url) { },
+
+
+            complete: function(url) { },
 
             //
             // the HTTP method to use. Defaults to "GET".
@@ -88,7 +94,7 @@ $.extend({
             httpMethod: "GET",
 
             //
-            // if specified will perform a "httpMethod" request to the specified 'fileUrl' using the specified data.
+            // if specified will perform a "httpMethod" request to the specified 'settings.url' using the specified data.
             // data must be an object (which will be $.param serialized) or already a key=value param string
             //
             data: null,
@@ -125,7 +131,7 @@ $.extend({
             //It is recommended that on the server, htmlentity decoding is done irrespective.
             //
             encodeHTMLEntities: true
-            
+
         }, options);
 
         var deferred = new $.Deferred();
@@ -191,7 +197,8 @@ $.extend({
                     $preparingDialog.dialog('close');
                 };
 
-                settings.successCallback(url);
+                settings.success(url);
+                settings.complete('', url);
 
                 deferred.resolve(url);
             },
@@ -208,13 +215,14 @@ $.extend({
                     $("<div>").html(settings.failMessageHtml).dialog(settings.dialogOptions);
                 }
 
-                settings.failCallback(responseHtml, url);
-                
+                settings.error(responseHtml, url);
+                settings.complete(responseHtml, url);
+
                 deferred.reject(responseHtml, url);
             }
         };
 
-        internalCallbacks.onPrepare(fileUrl);
+        internalCallbacks.onPrepare(settings.url);
 
         //make settings.data a param string if it exists and isn't already
         if (settings.data !== null && typeof settings.data !== "string") {
@@ -230,40 +238,40 @@ $.extend({
         if (httpMethodUpper === "GET") {
 
             if (settings.data !== null) {
-                //need to merge any fileUrl params with the data object
+                //need to merge any settings.url params with the data object
 
-                var qsStart = fileUrl.indexOf('?');
+                var qsStart = settings.url.indexOf('?');
 
                 if (qsStart !== -1) {
                     //we have a querystring in the url
 
-                    if (fileUrl.substring(fileUrl.length - 1) !== "&") {
-                        fileUrl = fileUrl + "&";
+                    if (settings.url.substring(settings.url.length - 1) !== "&") {
+                        settings.url = settings.url + "&";
                     }
                 } else {
 
-                    fileUrl = fileUrl + "?";
+                    settings.url = settings.url + "?";
                 }
 
-                fileUrl = fileUrl + settings.data;
+                settings.url = settings.url + settings.data;
             }
 
             if (isIos || isAndroid) {
 
-                downloadWindow = window.open(fileUrl);
+                downloadWindow = window.open(settings.url);
                 downloadWindow.document.title = settings.popupWindowTitle;
                 window.focus();
 
             } else if (isOtherMobileBrowser) {
 
-                window.location(fileUrl);
+                window.location(settings.url);
 
             } else {
 
-                //create a temporary iframe that is used to request the fileUrl as a GET request
+                //create a temporary iframe that is used to request the settings.url as a GET request
                 $iframe = $("<iframe>")
                     .hide()
-                    .prop("src", fileUrl)
+                    .prop("src", settings.url)
                     .appendTo("body");
             }
 
@@ -290,7 +298,7 @@ $.extend({
                 $form = $("<form>").appendTo("body");
                 $form.hide()
                     .prop('method', settings.httpMethod)
-                    .prop('action', fileUrl)
+                    .prop('action', settings.url)
                     .html(formInnerHtml);
 
             } else {
@@ -308,7 +316,7 @@ $.extend({
                     formDoc = getiframeDocument($iframe);
                 }
 
-                formDoc.write("<html><head></head><body><form method='" + settings.httpMethod + "' action='" + fileUrl + "'>" + formInnerHtml + "</form>" + settings.popupWindowTitle + "</body></html>");
+                formDoc.write("<html><head></head><body><form method='" + settings.httpMethod + "' action='" + settings.url + "'>" + formInnerHtml + "</form>" + settings.popupWindowTitle + "</body></html>");
                 $form = $(formDoc).find('form');
             }
 
@@ -326,7 +334,7 @@ $.extend({
             if (document.cookie.indexOf(settings.cookieName + "=" + settings.cookieValue) != -1) {
 
                 //execute specified callback
-                internalCallbacks.onSuccess(fileUrl);
+                internalCallbacks.onSuccess(settings.url);
 
                 //remove the cookie and iframe
                 document.cookie = settings.cookieName + "=; expires=" + new Date(1000).toUTCString() + "; path=" + settings.cookiePath;
@@ -358,7 +366,7 @@ $.extend({
                         }
 
                         if (isFailure) {
-                            internalCallbacks.onFail(formDoc.body.innerHTML, fileUrl);
+                            internalCallbacks.onFail(formDoc.body.innerHTML, settings.url);
 
                             cleanUp(true);
 
@@ -369,7 +377,7 @@ $.extend({
                 catch (err) {
 
                     //500 error less than IE9
-                    internalCallbacks.onFail('', fileUrl);
+                    internalCallbacks.onFail('', settings.url);
 
                     cleanUp(true);
 
@@ -408,7 +416,7 @@ $.extend({
                         }
                     }
                 }
-                
+
                 //iframe cleanup appears to randomly cause the download to fail
                 //not doing it seems better than failure...
                 //if ($iframe) {
@@ -422,7 +430,7 @@ $.extend({
         function htmlSpecialCharsEntityEncode(str) {
             return str.replace(htmlSpecialCharsRegEx, function(match) {
                 return '&' + htmlSpecialCharsPlaceHolders[match];
-        	});
+          });
         }
 
         return deferred.promise();
