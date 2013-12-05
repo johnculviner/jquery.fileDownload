@@ -85,6 +85,9 @@ $.extend({
             //
             error: function (responseHtml, url) { },
 
+
+            complete: function(url) { },
+
             //
             // the HTTP method to use. Defaults to "GET".
             //
@@ -195,6 +198,7 @@ $.extend({
                 };
 
                 settings.success(url);
+                settings.complete('', url);
 
                 deferred.resolve(url);
             },
@@ -212,6 +216,7 @@ $.extend({
                 }
 
                 settings.error(responseHtml, url);
+                settings.complete(responseHtml, url);
 
                 deferred.reject(responseHtml, url);
             }
