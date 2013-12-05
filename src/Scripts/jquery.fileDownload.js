@@ -70,7 +70,7 @@ $.extend({
             //Args:
             //  url - the original url attempted
             //
-            successCallback: function (url) { },
+            success: function (url) { },
 
             //
             //a function to call after a file download dialog/ribbon has appeared
@@ -80,7 +80,7 @@ $.extend({
             //                      server's error message with a "helpful" IE built in message
             //  url             - the original url attempted
             //
-            failCallback: function (responseHtml, url) { },
+            error: function (responseHtml, url) { },
 
             //
             // the HTTP method to use. Defaults to "GET".
@@ -191,7 +191,7 @@ $.extend({
                     $preparingDialog.dialog('close');
                 };
 
-                settings.successCallback(url);
+                settings.success(url);
 
                 deferred.resolve(url);
             },
@@ -208,7 +208,7 @@ $.extend({
                     $("<div>").html(settings.failMessageHtml).dialog(settings.dialogOptions);
                 }
 
-                settings.failCallback(responseHtml, url);
+                settings.error(responseHtml, url);
                 
                 deferred.reject(responseHtml, url);
             }
