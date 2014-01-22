@@ -124,8 +124,11 @@ $.extend({
             //Note that some browsers will POST the string htmlentity-encoded whilst others will decode it before POSTing.
             //It is recommended that on the server, htmlentity decoding is done irrespective.
             //
-            encodeHTMLEntities: true
-            
+            encodeHTMLEntities: true,
+
+            // timeout -- In milliseconds, time to wait for the file to download, after which failCallback is called.
+            // By default (null), timeout is not enabled.
+            timeout: null,
         }, options);
 
         var deferred = new $.Deferred();
@@ -136,6 +139,7 @@ $.extend({
         var isIos;                  //has full support of features in iOS 4.0+, uses a new window to accomplish this.
         var isAndroid;              //has full support of GET features in 4.0+ by using a new window. Non-GET is completely unsupported by the browser. See above for specifying a message.
         var isOtherMobileBrowser;   //there is no way to reliably guess here so all other mobile devices will GET and POST to the current window.
+        var timePassed = 0;
 
         if (/ip(ad|hone|od)/.test(userAgent)) {
 
@@ -377,9 +381,18 @@ $.extend({
                 }
             }
 
+            timePassed += settings.checkInterval;
+            if (settings.timeout == null || (timePassed < settings.timeout)) {
+                //no timeout defined. continue checking...
+                setTimeout(checkFileDownloadComplete, settings.checkInterval);
+            } else {
+                //oops -- timed out.
+                internalCallbacks.onFail('', fileUrl);
 
-            //keep checking...
-            setTimeout(checkFileDownloadComplete, settings.checkInterval);
+                cleanUp(true);
+
+                return;
+            }
         }
 
         //gets an iframes document in a cross browser compatible manner
@@ -408,7 +421,6 @@ $.extend({
                         }
                     }
                 }
-                
                 //iframe cleanup appears to randomly cause the download to fail
                 //not doing it seems better than failure...
                 //if ($iframe) {
