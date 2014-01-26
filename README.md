@@ -29,3 +29,8 @@ http://johnculviner.com/category/jQuery-File-Download.aspx
 ###Or look at the well documented JavaScript source:
 https://github.com/johnculviner/jquery.fileDownload/blob/master/src/Scripts/jquery.fileDownload.js
 
+### Ruby on Rails integration
+
+The [`jquery_file_download-rails`](https://github.com/rcook/jquery_file_download-rails)
+gem integrates `jquery.fileDownload.js` into the Rails 3.1+ asset pipeline.
+
