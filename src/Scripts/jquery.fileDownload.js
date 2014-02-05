@@ -80,7 +80,8 @@ $.extend({
             //                      server's error message with a "helpful" IE built in message
             //  url             - the original url attempted
             //
-            failCallback: function (responseHtml, url) { },
+            //  failReason      - the reason provided within the response cookie
+            failCallback: function (responseHtml, url, failReason) { },
 
             //
             // the HTTP method to use. Defaults to "GET".
@@ -107,6 +108,11 @@ $.extend({
             //the cookie value for the above name to indicate that a file download has occured
             //
             cookieValue: "true",
+
+            //
+            //the cookie name to provide a reason if failure
+            //
+            cookieNameFailReason: "fileDownloadFailureReason",
 
             //
             //the cookie path for above name value pair
@@ -196,7 +202,7 @@ $.extend({
                 deferred.resolve(url);
             },
 
-            onFail: function (responseHtml, url) {
+            onFail: function (responseHtml, url, failReason) {
 
                 //remove the perparing message if it was specified
                 if ($preparingDialog) {
@@ -208,7 +214,7 @@ $.extend({
                     $("<div>").html(settings.failMessageHtml).dialog(settings.dialogOptions);
                 }
 
-                settings.failCallback(responseHtml, url);
+                settings.failCallback(responseHtml, url, failReason);
                 
                 deferred.reject(responseHtml, url);
             }
@@ -358,7 +364,21 @@ $.extend({
                         }
 
                         if (isFailure) {
-                            internalCallbacks.onFail(formDoc.body.innerHTML, fileUrl);
+                            var failreasonIndex = document.cookie.indexOf(settings.cookieNameFailReason);
+                            var failReason = undefined;
+                            if (failreasonIndex != -1) {
+                                var i, x, y, ARRcookies = document.cookie.split(";");
+                                for (i = 0; i < ARRcookies.length; i++) {
+                                    x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+                                    y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+                                    x = x.replace(/^\s+|\s+$/g, "");
+                                    if (x === settings.cookieNameFailReason) {
+                                        failReason = unescape(y);
+                                    }
+                                }
+                            }
+ 
+                            internalCallbacks.onFail(formDoc.body.innerHTML, fileUrl, failReason);
 
                             cleanUp(true);
 
@@ -369,7 +389,7 @@ $.extend({
                 catch (err) {
 
                     //500 error less than IE9
-                    internalCallbacks.onFail('', fileUrl);
+                    internalCallbacks.onFail('', fileUrl, '');
 
                     cleanUp(true);
 
