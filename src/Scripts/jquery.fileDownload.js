@@ -402,9 +402,11 @@ $.extend({
                     }
 
                     if (isIos) {
-                        downloadWindow.focus(); //ios safari bug doesn't allow a window to be closed unless it is focused
-                        if (isFailure) {
-                            downloadWindow.close();
+                        if (downloadWindow.focus) {
+                            downloadWindow.focus(); //ios safari bug doesn't allow a window to be closed unless it is focused
+                            if (isFailure) {
+                                downloadWindow.close();
+                            }
                         }
                     }
                 }
