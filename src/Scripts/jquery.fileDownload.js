@@ -352,16 +352,27 @@ $.extend({
                         if ($form && $form.length) {
                             var $contents = $(formDoc.body).contents().first();
 
-                            if ($contents.length && $contents[0] === $form[0]) {
-                                isFailure = false;
-                            }
+                            try {
+                                if ($contents.length && $contents[0] === $form[0]) {
+                                    isFailure = false;
+                                }
+                            } catch (e) {
+                                if (e && e.number == -2146828218) {
+                                    // IE 8-10 throw a permission denied after the form reloads on the "$contents[0] === $form[0]" comparison
+                                    isFailure = true;
+                                } else {
+                                    throw e;
+                                }
+                            } 
                         }
 
                         if (isFailure) {
-                            internalCallbacks.onFail(formDoc.body.innerHTML, fileUrl);
-
-                            cleanUp(true);
-
+                            // IE 8-10 don't always have the full content available right away, they need a litle bit to finish
+                            setTimeout(function () {
+                                internalCallbacks.onFail(formDoc.body.innerHTML, fileUrl);
+                                cleanUp(true);
+                            }, 100);
+                            
                             return;
                         }
                     }
