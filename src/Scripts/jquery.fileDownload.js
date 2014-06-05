@@ -24,7 +24,7 @@
 				'\r': "#13;",
 				'\n': "#10;",
 				'"': 'quot;',
-				"'": 'apos;' /*single quotes just to be safe*/
+				"'": '#39;' /*single quotes just to be safe, IE8 doesn't support &apos;, so use &#39; instead */
 	};
 
 $.extend({
