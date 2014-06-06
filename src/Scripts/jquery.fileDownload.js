@@ -114,6 +114,12 @@ $.extend({
             cookiePath: "/",
 
             //
+            //if specified it will be used when attempting to clear the above name value pair
+            //useful for when downloads are being served on a subdomain (e.g. downloads.example.com)
+            //	
+            cookieDomain: null,
+
+            //
             //the title for the popup second window as a download is processing in the case of a mobile browser
             //
             popupWindowTitle: "Initiating file download...",
@@ -321,16 +327,18 @@ $.extend({
 
 
         function checkFileDownloadComplete() {
-
             //has the cookie been written due to a file download occuring?
             if (document.cookie.indexOf(settings.cookieName + "=" + settings.cookieValue) != -1) {
 
                 //execute specified callback
                 internalCallbacks.onSuccess(fileUrl);
 
-                //remove the cookie and iframe
-                document.cookie = settings.cookieName + "=; expires=" + new Date(1000).toUTCString() + "; path=" + settings.cookiePath;
+                //remove cookie
+                var cookieData = settings.cookieName + "=; path=" + settings.cookiePath + "; expires=" + new Date(0).toUTCString() + ";";
+                if (settings.cookieDomain) cookieData += " domain=" + settings.cookieDomain + ";";
+                document.cookie = cookieData;
 
+                //remove iframe
                 cleanUp(false);
 
                 return;
