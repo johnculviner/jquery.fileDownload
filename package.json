@@ -1,0 +1,10 @@
+{
+    "name": "jquery.fileDownload",
+    "version": "0.0.1",
+    "description": "A npm-packaged version of John Culviner's jQuery.fileDownload plugin",
+    "author": "John Culviner",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/CodeYellowBV/jquery.fileDownload.git"
+    }
+}
