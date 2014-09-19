@@ -32,10 +32,14 @@ $.extend({
     //$.fileDownload('/path/to/url/', options)
     //  see directly below for possible 'options'
     fileDownload: function (fileUrl, options) {
-
+    	//flag of download status
+    	var isCleanedUp = false;
         //provide some reasonable defaults to any unspecified options below
         var settings = $.extend({
-
+        	//
+        	//get session values of the URL for Ajax
+        	//
+        	getStatusUrl: null,
             //
             //Requires jQuery UI: provide a message to display to the user when the file download is being prepared before the browser's dialog appears
             //
@@ -100,7 +104,7 @@ $.extend({
 
             //
             //the cookie name to indicate if a file download has occured
-            //
+            //this version is't use cookie and use session values. --hacked by loveapple
             cookieName: "fileDownload",
 
             //
@@ -326,24 +330,36 @@ $.extend({
         setTimeout(checkFileDownloadComplete, settings.checkInterval);
 
 
+        //this version is't user cookie to save/check status and use sesion do it. -- hacked by loveapple
         function checkFileDownloadComplete() {
-            //has the cookie been written due to a file download occuring?
-            if (document.cookie.indexOf(settings.cookieName + "=" + settings.cookieValue) != -1) {
+        	if(isCleanedUp){
+        		return;
+        	}
+        	$.ajax({
+        		type : 'POST',
+        		url : settings.getStatusUrl,
+        		dataType : 'json',
+        	}).done(
+        		function(json) {
 
-                //execute specified callback
-                internalCallbacks.onSuccess(fileUrl);
+                	//has the session been written due to a file download occuring?
+        			if(hasValue(settings.cookieValue, json.code)){
+                        //execute specified callback
+                        internalCallbacks.onSuccess(fileUrl);
 
-                //remove cookie
-                var cookieData = settings.cookieName + "=; path=" + settings.cookiePath + "; expires=" + new Date(0).toUTCString() + ";";
-                if (settings.cookieDomain) cookieData += " domain=" + settings.cookieDomain + ";";
-                document.cookie = cookieData;
+                        //remove cookie
+                        //var cookieData = settings.cookieName + "=; path=" + settings.cookiePath + "; expires=" + new Date(0).toUTCString() + ";";
+                        //if (settings.cookieDomain) cookieData += " domain=" + settings.cookieDomain + ";";
+                        //document.cookie = cookieData;
 
-                //remove iframe
-                cleanUp(false);
+                        //remove iframe
+                        cleanUp(false);
 
-                return;
-            }
-
+                        return;
+        			}
+        	}).fail(function(data) {
+        	});
+        	
             //has an error occured?
             //if neither containers exist below then the file download is occuring on the current window
             if (downloadWindow || $iframe) {
@@ -437,6 +453,8 @@ $.extend({
                 //}
 
             }, 0);
+            
+            isCleanedUp = true;
         }
 
 
@@ -444,6 +462,22 @@ $.extend({
             return str.replace(htmlSpecialCharsRegEx, function(match) {
                 return '&' + htmlSpecialCharsPlaceHolders[match];
         	});
+        }
+        
+        /*
+         * Check to see if has target string in the csv String, return true.
+         */
+        function hasValue(targetStr, csvStr){
+        	if(!targetStr || !csvStr){
+        		return false;
+        	}
+        	var tmp = csvStr.split( ',' );
+        	for(var i = 0; i < tmp.length; i++){
+        		if(targetStr == tmp[i]){
+        			return true;
+        		}
+        	}
+        	return false;
         }
 
         return deferred.promise();
