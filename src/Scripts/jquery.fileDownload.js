@@ -32,9 +32,13 @@ $.extend({
     //$.fileDownload('/path/to/url/', options)
     //  see directly below for possible 'options'
     fileDownload: function (fileUrl, options) {
+    	//flag of download status
     	var isCleanedUp = false;
         //provide some reasonable defaults to any unspecified options below
         var settings = $.extend({
+        	//
+        	//get session values of the URL for Ajax
+        	//
         	getStatusUrl: null,
             //
             //Requires jQuery UI: provide a message to display to the user when the file download is being prepared before the browser's dialog appears
@@ -100,7 +104,7 @@ $.extend({
 
             //
             //the cookie name to indicate if a file download has occured
-            //this version is't use cookie and use session values. --hacked by HAO
+            //this version is't use cookie and use session values. --hacked by loveapple
             cookieName: "fileDownload",
 
             //
@@ -326,7 +330,7 @@ $.extend({
         setTimeout(checkFileDownloadComplete, settings.checkInterval);
 
 
-        //this version is't user cookie to save/check status and use sesion do it. -- hacked by HAO
+        //this version is't user cookie to save/check status and use sesion do it. -- hacked by loveapple
         function checkFileDownloadComplete() {
         	if(isCleanedUp){
         		return;
@@ -338,7 +342,7 @@ $.extend({
         	}).done(
         		function(json) {
 
-                	//has the cookie been written due to a file download occuring?
+                	//has the session been written due to a file download occuring?
         			if(hasValue(settings.cookieValue, json.code)){
                         //execute specified callback
                         internalCallbacks.onSuccess(fileUrl);
@@ -460,6 +464,9 @@ $.extend({
         	});
         }
         
+        /*
+         * Check to see if has target string in the csv String, return true.
+         */
         function hasValue(targetStr, csvStr){
         	if(!targetStr || !csvStr){
         		return false;
