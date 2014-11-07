@@ -445,8 +445,12 @@ $.extend({
                 return '&' + htmlSpecialCharsPlaceHolders[match];
         	});
         }
-
-        return deferred.promise();
+        var promise = deferred.promise();
+        promise.abort = function() {
+            cleanUp();
+            $iframe.remove();
+        };
+        return promise;
     }
 });
 
