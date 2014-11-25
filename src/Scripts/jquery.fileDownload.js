@@ -50,6 +50,7 @@ $.extend({
             //the stock android browser straight up doesn't support file downloads initiated by a non GET: http://code.google.com/p/android/issues/detail?id=1780
             //specify a message here to display if a user tries with an android browser
             //if jQuery UI is installed this will be a dialog, otherwise it will be an alert
+            //Set to null to disable the message and attempt to download anyway
             //
             androidPostUnsupportedMessageHtml: "Unfortunately your Android browser doesn't support this type of file download. Please try again with a different browser.",
 
@@ -159,7 +160,7 @@ $.extend({
 
         var httpMethodUpper = settings.httpMethod.toUpperCase();
 
-        if (isAndroid && httpMethodUpper !== "GET") {
+        if (isAndroid && httpMethodUpper !== "GET" && settings.androidPostUnsupportedMessageHtml) {
             //the stock android browser straight up doesn't support file downloads initiated by non GET requests: http://code.google.com/p/android/issues/detail?id=1780
 
             if ($().dialog) {
