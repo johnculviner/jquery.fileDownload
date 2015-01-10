@@ -84,6 +84,16 @@ $.extend({
             failCallback: function (responseHtml, url) { },
 
             //
+            //a function to call after a file download dialog/ribbon has appeared regardless of success or failure
+            //Args:
+            //  responseHtml    - the html that came back in response to the file download. this won't necessarily come back depending on the browser.
+            //                      in less than IE9 a cross domain error occurs because 500+ errors cause a cross domain issue due to IE subbing out the
+            //                      server's error message with a "helpful" IE built in message
+            //  url - the original url attempted
+            //
+            alwaysCallback: function (responseHtml, url) { },
+
+            //
             // the HTTP method to use. Defaults to "GET".
             //
             httpMethod: "GET",
@@ -200,6 +210,8 @@ $.extend({
 
                 settings.successCallback(url);
 
+                settings.alwaysCallback('', url);
+
                 deferred.resolve(url);
             },
 
@@ -216,6 +228,8 @@ $.extend({
                 }
 
                 settings.failCallback(responseHtml, url);
+
+                settings.alwaysCallback(responseHtml, url);
                 
                 deferred.reject(responseHtml, url);
             }
