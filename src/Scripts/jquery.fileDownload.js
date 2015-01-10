@@ -210,7 +210,9 @@ $.extend({
 
                 settings.successCallback(url);
 
-                settings.alwaysCallback('', url);
+                if(settings.alwaysCallback) {
+                    settings.alwaysCallback('', url);
+                }
 
                 deferred.resolve(url);
             },
@@ -229,7 +231,9 @@ $.extend({
 
                 settings.failCallback(responseHtml, url);
 
-                settings.alwaysCallback(responseHtml, url);
+                if(settings.alwaysCallback) {
+                    settings.alwaysCallback(responseHtml, url);
+                }
                 
                 deferred.reject(responseHtml, url);
             }
