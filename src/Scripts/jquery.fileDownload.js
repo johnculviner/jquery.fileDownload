@@ -134,6 +134,11 @@ $.extend({
             encodeHTMLEntities: true
             
         }, options);
+        
+        // remove the previous cookie that might be left unfinished from the previous process
+        var cookieData = settings.cookieName + "=; path=" + settings.cookiePath + "; expires=" + new Date(0).toUTCString() + ";";
+        if (settings.cookieDomain) cookieData += " domain=" + settings.cookieDomain + ";";
+        document.cookie = cookieData;
 
         var deferred = new $.Deferred();
 
