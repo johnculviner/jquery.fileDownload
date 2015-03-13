@@ -329,7 +329,9 @@ $.extend({
 
         function checkFileDownloadComplete() {
             //has the cookie been written due to a file download occuring?
-            if (document.cookie.indexOf(settings.cookieName + "=" + settings.cookieValue) != -1) {
+            var lowerCaseCookie = settings.cookieName.toLowerCase() + "=" + settings.cookieValue.toLowerCase();
+
+            if (document.cookie.toLowerCase().indexOf(lowerCaseCookie) > -1) {
 
                 //execute specified callback
                 internalCallbacks.onSuccess(fileUrl);
