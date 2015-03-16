@@ -196,7 +196,7 @@ $.extend({
                 //remove the perparing message if it was specified
                 if ($preparingDialog) {
                     $preparingDialog.dialog('close');
-                };
+                }
 
                 settings.successCallback(url);
 
@@ -208,7 +208,7 @@ $.extend({
                 //remove the perparing message if it was specified
                 if ($preparingDialog) {
                     $preparingDialog.dialog('close');
-                };
+                }
 
                 //wire up a jquery dialog to display the fail message if specified
                 if (settings.failMessageHtml) {
@@ -329,7 +329,13 @@ $.extend({
 
         function checkFileDownloadComplete() {
             //has the cookie been written due to a file download occuring?
-            var lowerCaseCookie = settings.cookieName.toLowerCase() + "=" + settings.cookieValue.toLowerCase();
+
+            var cookieValue = settings.cookieValue;
+            if(typeof cookieValue == 'string') {
+                cookieValue = cookieValue.toLowerCase();
+            }
+
+            var lowerCaseCookie = settings.cookieName.toLowerCase() + "=" + cookieValue;
 
             if (document.cookie.toLowerCase().indexOf(lowerCaseCookie) > -1) {
 
@@ -356,7 +362,7 @@ $.extend({
 
                     var formDoc = downloadWindow ? downloadWindow.document : getiframeDocument($iframe);
 
-                    if (formDoc && formDoc.body != null && formDoc.body.innerHTML.length) {
+                    if (formDoc && formDoc.body !== null && formDoc.body.innerHTML.length) {
 
                         var isFailure = true;
 
