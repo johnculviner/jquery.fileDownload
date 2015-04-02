@@ -19,6 +19,11 @@ http://jqueryfiledownload.apphb.com/
 #Note - You must also write a cookie in conjunction with using this plugin as mentioned in the orignal post:
 http://johnculviner.com/post/2012/03/22/Ajax-like-feature-rich-file-downloads-with-jQuery-File-Download.aspx
 
+#Install
+```
+bower install jquery-file-download -S
+```
+
 ####Example of writing cookie (MVC):
 https://github.com/johnculviner/jquery.fileDownload/blob/master/src/Common/FileDownloadAttribute.cs<br/>
 The above attribute can be used on any controller action that may return a file download that you would like to use jquery.fileDownload.js with
