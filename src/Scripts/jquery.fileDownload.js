@@ -1,5 +1,5 @@
 /*
-* jQuery File Download Plugin v1.4.3 
+* jQuery File Download Plugin v1.4.4
 *
 * http://www.johnculviner.com
 *
@@ -14,18 +14,30 @@
 * !!!!NOTE!!!!
 */
 
-(function($, window){
-	// i'll just put them here to get evaluated on script load
-	var htmlSpecialCharsRegEx = /[<>&\r\n"']/gm;
-	var htmlSpecialCharsPlaceHolders = {
-				'<': 'lt;',
-				'>': 'gt;',
-				'&': 'amp;',
-				'\r': "#13;",
-				'\n': "#10;",
-				'"': 'quot;',
-				"'": '#39;' /*single quotes just to be safe, IE8 doesn't support &apos;, so use &#39; instead */
-	};
+// Uses CommonJS, AMD or browser globals to create a jQuery plugin
+(function (factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['jquery'], factory);
+    } else if (typeof exports === 'object') {
+        // Node/CommonJS
+        module.exports = factory(require('jquery'));
+    } else {
+        // Browser globals
+        factory(jQuery);
+    }
+}(function ($) {
+    // i'll just put them here to get evaluated on script load
+    var htmlSpecialCharsRegEx = /[<>&\r\n"']/gm;
+    var htmlSpecialCharsPlaceHolders = {
+                '<': 'lt;',
+                '>': 'gt;',
+                '&': 'amp;',
+                '\r': "#13;",
+                '\n': "#10;",
+                '"': 'quot;',
+                "'": '#39;' /*single quotes just to be safe, IE8 doesn't support &apos;, so use &#39; instead */
+    };
 
 $.extend({
     //
@@ -463,4 +475,4 @@ $.extend({
     }
 });
 
-})(jQuery, this);
+});
