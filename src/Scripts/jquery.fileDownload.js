@@ -284,6 +284,12 @@ $.extend({
 
                     var kvp = this.split("=");
 
+                    //Issue: When value contains sign '=' then the kvp array does have more than 2 items. We have to join value back
+                    var k = kvp[0];
+                    kvp.shift();
+                    var v = kvp.join("=");
+                    kvp = [k, v];
+
                     var key = settings.encodeHTMLEntities ? htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[0])) : decodeURIComponent(kvp[0]);
                     if (key) {
                         var value = settings.encodeHTMLEntities ? htmlSpecialCharsEntityEncode(decodeURIComponent(kvp[1])) : decodeURIComponent(kvp[1]);
