@@ -1,5 +1,5 @@
 /*
-* jQuery File Download Plugin v1.4.3 
+* jQuery File Download Plugin v1.4.3
 *
 * http://www.johnculviner.com
 *
@@ -80,8 +80,9 @@ $.extend({
             //                      in less than IE9 a cross domain error occurs because 500+ errors cause a cross domain issue due to IE subbing out the
             //                      server's error message with a "helpful" IE built in message
             //  url             - the original url attempted
+            //  error           - original error cautch from exception
             //
-            failCallback: function (responseHtml, url) { },
+            failCallback: function (responseHtml, url, error) { },
 
             //
             // the HTTP method to use. Defaults to "GET".
@@ -117,7 +118,7 @@ $.extend({
             //
             //if specified it will be used when attempting to clear the above name value pair
             //useful for when downloads are being served on a subdomain (e.g. downloads.example.com)
-            //	
+            //
             cookieDomain: null,
 
             //
@@ -132,7 +133,7 @@ $.extend({
             //It is recommended that on the server, htmlentity decoding is done irrespective.
             //
             encodeHTMLEntities: true
-            
+
         }, options);
 
         var deferred = new $.Deferred();
@@ -203,7 +204,7 @@ $.extend({
                 deferred.resolve(url);
             },
 
-            onFail: function (responseHtml, url) {
+            onFail: function (responseHtml, url, error) {
 
                 //remove the perparing message if it was specified
                 if ($preparingDialog) {
@@ -215,8 +216,8 @@ $.extend({
                     $("<div>").html(settings.failMessageHtml).dialog(settings.dialogOptions);
                 }
 
-                settings.failCallback(responseHtml, url);
-                
+                settings.failCallback(responseHtml, url, error);
+
                 deferred.reject(responseHtml, url);
             }
         };
@@ -386,7 +387,7 @@ $.extend({
                                 } else {
                                     throw e;
                                 }
-                            } 
+                            }
                         }
 
                         if (isFailure) {
@@ -395,7 +396,7 @@ $.extend({
                                 internalCallbacks.onFail(formDoc.body.innerHTML, fileUrl);
                                 cleanUp(true);
                             }, 100);
-                            
+
                             return;
                         }
                     }
@@ -403,7 +404,7 @@ $.extend({
                 catch (err) {
 
                     //500 error less than IE9
-                    internalCallbacks.onFail('', fileUrl);
+                    internalCallbacks.onFail('', fileUrl, err);
 
                     cleanUp(true);
 
@@ -444,7 +445,7 @@ $.extend({
                         }
                     }
                 }
-                
+
                 //iframe cleanup appears to randomly cause the download to fail
                 //not doing it seems better than failure...
                 //if ($iframe) {
