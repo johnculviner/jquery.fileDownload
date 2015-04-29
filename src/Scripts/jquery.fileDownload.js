@@ -1,5 +1,5 @@
 /*
-* jQuery File Download Plugin v1.4.3
+* jQuery File Download Plugin v1.4.4
 *
 * http://www.johnculviner.com
 *
