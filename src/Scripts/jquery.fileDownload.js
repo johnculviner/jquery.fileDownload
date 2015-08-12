@@ -194,7 +194,7 @@ $.extend({
 
             onSuccess: function (url) {
 
-                //remove the perparing message if it was specified
+                //remove the preparing message if it was specified
                 if ($preparingDialog) {
                     $preparingDialog.dialog('close');
                 }
@@ -206,7 +206,7 @@ $.extend({
 
             onFail: function (responseHtml, url, error) {
 
-                //remove the perparing message if it was specified
+                //remove the preparing message if it was specified
                 if ($preparingDialog) {
                     $preparingDialog.dialog('close');
                 }
