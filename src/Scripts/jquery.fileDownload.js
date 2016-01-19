@@ -324,7 +324,7 @@ $.extend({
 
                 formDoc.write(
                 	"<html><head></head><body><form method='" + settings.httpMethod + "' action='" + fileUrl + "'" 
-                	+ (settings.encType ? "enctype='" + settings.encType + "'" : "")
+                	+ (settings.encType ? " enctype='" + settings.encType + "'" : "")
                 	+ ">" 
                 	+ formInnerHtml 
                 	+ "</form>" + settings.popupWindowTitle + "</body></html>");
