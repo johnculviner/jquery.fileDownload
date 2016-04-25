@@ -278,6 +278,7 @@ $.extend({
         } else {
 
             var formInnerHtml = "";
+            var iframeName = "download" + Math.floor(Math.random() * 1000000) + Date.now();
 
             if (settings.data !== null) {
 
@@ -318,12 +319,16 @@ $.extend({
 
                 } else {
 
-                    $iframe = $("<iframe style='display: none' src='about:blank'></iframe>").appendTo("body");
+                    $iframe = $("<iframe style='display: none' name='" + iframeName + "' src='about:blank'></iframe>").appendTo("body");
                     formDoc = getiframeDocument($iframe);
                 }
 
-                formDoc.write("<html><head></head><body><form method='" + settings.httpMethod + "' action='" + fileUrl + "'>" + formInnerHtml + "</form>" + settings.popupWindowTitle + "</body></html>");
-                $form = $(formDoc).find('form');
+                $form = $("<form>").appendTo("body");
+                $form.hide()
+                    .prop('method', settings.httpMethod)
+                    .prop('action', fileUrl)
+                    .prop('target', iframeName)
+                    .html(formInnerHtml);
             }
 
             $form.submit();
@@ -402,12 +407,10 @@ $.extend({
                     }
                 }
                 catch (err) {
-
-                    //500 error less than IE9
-                    internalCallbacks.onFail('', fileUrl, err);
-
+                    makeAjaxRequest(fileUrl, settings.httpMethod, settings.data).fail(function (jqXhr) {
+                        internalCallbacks.onFail(jqXhr.responseText, fileUrl);
+                    });
                     cleanUp(true);
-
                     return;
                 }
             }
@@ -459,7 +462,7 @@ $.extend({
         function htmlSpecialCharsEntityEncode(str) {
             return str.replace(htmlSpecialCharsRegEx, function(match) {
                 return '&' + htmlSpecialCharsPlaceHolders[match];
-        	});
+            });
         }
         var promise = deferred.promise();
         promise.abort = function() {
@@ -469,5 +472,18 @@ $.extend({
         return promise;
     }
 });
+
+    function makeAjaxRequest(url, type, paramsStr) {
+        var opts = {
+            type: type,
+            url: url,
+            contentType: "application/x-www-form-urlencoded",
+        };
+        if (type !== "GET") {
+            opts.data = decodeURI(paramsStr);
+            opts.processData = false;
+        }
+        return $.ajax(opts).promise();
+    };
 
 })(jQuery, this);
