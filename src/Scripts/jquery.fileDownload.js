@@ -160,6 +160,7 @@ $.extend({
         }
 
         var httpMethodUpper = settings.httpMethod.toUpperCase();
+				document.cookie = settings.cookieName + "=; expires=Thu, 01-Jan-70 00:00:01 GMT;"; // delete cookie to fix onSuccess
 
         if (isAndroid && httpMethodUpper !== "GET" && settings.androidPostUnsupportedMessageHtml) {
             //the stock android browser straight up doesn't support file downloads initiated by non GET requests: http://code.google.com/p/android/issues/detail?id=1780
