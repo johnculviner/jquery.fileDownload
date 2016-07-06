@@ -67,14 +67,21 @@ $.extend({
             prepareCallback: function (url) { },
 
             //
-            //a function to call after a file download dialog/ribbon has appeared
+            //a function to call after a file download successfully completed
             //Args:
             //  url - the original url attempted
             //
             successCallback: function (url) { },
 
             //
-            //a function to call after a file download dialog/ribbon has appeared
+            //a function to call after a file download request was canceled
+            //Args:
+            //  url - the original url attempted
+            //
+            abortCallback: function (url) { },
+
+            //
+            //a function to call after a file download failed
             //Args:
             //  responseHtml    - the html that came back in response to the file download. this won't necessarily come back depending on the browser.
             //                      in less than IE9 a cross domain error occurs because 500+ errors cause a cross domain issue due to IE subbing out the
@@ -202,6 +209,18 @@ $.extend({
                 settings.successCallback(url);
 
                 deferred.resolve(url);
+            },
+
+            onAbort: function (url) {
+
+                //remove the perparing message if it was specified
+                if ($preparingDialog) {
+                    $preparingDialog.dialog('close');
+                };
+
+                settings.abortCallback(url);
+
+                deferred.reject(url);
             },
 
             onFail: function (responseHtml, url, error) {
@@ -464,7 +483,8 @@ $.extend({
         var promise = deferred.promise();
         promise.abort = function() {
             cleanUp();
-            $iframe.remove();
+            $iframe.attr('src', '').html('');
+            internalCallbacks.onAbort(fileUrl);
         };
         return promise;
     }
