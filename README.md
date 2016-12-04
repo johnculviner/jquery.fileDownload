@@ -50,3 +50,6 @@ https://github.com/johnculviner/jquery.fileDownload/blob/master/src/Scripts/jque
 The [`jquery_file_download-rails`](https://github.com/rcook/jquery_file_download-rails)
 gem integrates `jquery.fileDownload.js` into the Rails 3.1+ asset pipeline.
 
+### PHP integration
+https://github.com/seiko777/PHP-jquery-downloader
+
