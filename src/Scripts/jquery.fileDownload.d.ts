@@ -83,4 +83,24 @@ interface FileDownloadOptions
     *It is recommended that on the server, htmlentity decoding is done irrespective.
     */
     encodeHTMLEntities?: boolean;
+
+    /**
+     * A function to call while the dowload is being prepared before the browser's dialog appears
+     * @param {String} url the original url attempted
+     */
+    prepareCallback: (url: string) => {};
+    /**
+     * A function to call after a file download dialog/ribbon has appeared
+     * @param {String} url the original url attempted
+     */
+    successCallback: (url: string) => {};
+    /**
+     * A function to call after a file download dialog/ribbon has appeared.
+     * @param responseHtml the html that came back in response to the file download. this won't necessarily come back depending on the browser.
+     *                      in less than IE9 a cross domain error occurs because 500+ errors cause a cross domain issue due to IE subbing out the
+     *                      server's error message with a "helpful" IE built in message
+     * @param url the original url attempted
+     * @param error original error caught from exception
+     */
+    failCallback: (responseHtml: string, url: string, error?: Error) => {};
 }
