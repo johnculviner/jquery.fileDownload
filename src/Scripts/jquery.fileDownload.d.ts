@@ -88,12 +88,12 @@ interface FileDownloadOptions
      * A function to call while the dowload is being prepared before the browser's dialog appears
      * @param {String} url the original url attempted
      */
-    prepareCallback: (url: string) => {};
+    prepareCallback?: (url: string) => void;
     /**
      * A function to call after a file download dialog/ribbon has appeared
      * @param {String} url the original url attempted
      */
-    successCallback: (url: string) => {};
+    successCallback?: (url: string) => void;
     /**
      * A function to call after a file download dialog/ribbon has appeared.
      * @param responseHtml the html that came back in response to the file download. this won't necessarily come back depending on the browser.
@@ -102,5 +102,5 @@ interface FileDownloadOptions
      * @param url the original url attempted
      * @param error original error caught from exception
      */
-    failCallback: (responseHtml: string, url: string, error?: Error) => {};
+    failCallback?: (responseHtml: string, url: string, error?: Error) => void;
 }
