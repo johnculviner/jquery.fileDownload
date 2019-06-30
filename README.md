@@ -1,3 +1,28 @@
+# 2019 modern browsers update
+
+This is the approach I'd now recommend with a few caveats:
+- A relatively modern browser is required
+- If the file is expected to be very large you should likely do something similar to the original approach (iframe and cookie) because some of the below operations could likely consume system memory at least as large as the file being downloaded and/or other interesting CPU side effects.
+
+```
+fetch('https://jsonplaceholder.typicode.com/todos/1')
+  .then(resp => resp.blob())
+  .then(blob => {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    // the filename you want
+    a.download = 'todo-1.json';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    alert('your file has downloaded!'); // or you know, something with better UX...
+  })
+  .catch(() => alert('oh no!'));
+```
+
+# Original approach
 jQuery File Download is a cross server platform compatible jQuery plugin that allows for an Ajax-like file download experience that isn't normally possible using the web.
 
 ### Demo (of this exact source):
