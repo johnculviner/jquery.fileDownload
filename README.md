@@ -22,6 +22,8 @@ fetch('https://jsonplaceholder.typicode.com/todos/1')
   .catch(() => alert('oh no!'));
 ```
 
+Example of the above code in action: https://codesandbox.io/s/fetch-based-file-download-0kxod
+
 # Original approach
 jQuery File Download is a cross server platform compatible jQuery plugin that allows for an Ajax-like file download experience that isn't normally possible using the web.
 
