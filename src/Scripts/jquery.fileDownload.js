@@ -9,8 +9,8 @@
 *   http://www.opensource.org/licenses/mit-license.php
 *
 * !!!!NOTE!!!!
-* You must also write a cookie in conjunction with using this plugin as mentioned in the orignal post:
-* http://johnculviner.com/jquery-file-download-plugin-for-ajax-like-feature-rich-file-downloads/
+* You must also write a cookie in conjunction with using this plugin in the server's response headers containing the file download:
+* Set-Cookie: fileDownload=true; path=/"
 * !!!!NOTE!!!!
 */
 
