@@ -149,12 +149,17 @@ $.extend({
         var userAgent = (navigator.userAgent || navigator.vendor || window.opera).toLowerCase();
 
         var isIos;                  //has full support of features in iOS 4.0+, uses a new window to accomplish this.
+        var isChrome;               //mobile chrome does not need to be treated like the stock android browser
         var isAndroid;              //has full support of GET features in 4.0+ by using a new window. Non-GET is completely unsupported by the browser. See above for specifying a message.
         var isOtherMobileBrowser;   //there is no way to reliably guess here so all other mobile devices will GET and POST to the current window.
 
         if (/ip(ad|hone|od)/.test(userAgent)) {
 
             isIos = true;
+
+        } else if (userAgent.indexOf('chrome') !== -1) {
+
+            isChrome = true;
 
         } else if (userAgent.indexOf('android') !== -1) {
 
