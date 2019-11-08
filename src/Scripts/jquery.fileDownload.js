@@ -338,7 +338,12 @@ $.extend({
                     formDoc = getiframeDocument($iframe);
                 }
 
-                formDoc.write("<html><head></head><body><form method='" + settings.httpMethod + "' action='" + fileUrl + "'>" + formInnerHtml + "</form>" + settings.popupWindowTitle + "</body></html>");
+                formDoc.write(
+                	"<html><head></head><body><form method='" + settings.httpMethod + "' action='" + fileUrl + "'" 
+                	+ (settings.encType ? " enctype='" + settings.encType + "'" : "")
+                	+ ">" 
+                	+ formInnerHtml 
+                	+ "</form>" + settings.popupWindowTitle + "</body></html>");
                 $form = $(formDoc).find('form');
             }
 
