@@ -342,7 +342,7 @@ $.extend({
                 $form = $(formDoc).find('form');
             }
 
-            $form.submit();
+            $form.trigger('submit');
         }
 
 
