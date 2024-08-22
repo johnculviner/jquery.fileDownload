@@ -27,9 +27,6 @@ Example of the above code in action: https://codesandbox.io/s/fetch-based-file-d
 # Original approach
 jQuery File Download is a cross server platform compatible jQuery plugin that allows for an Ajax-like file download experience that isn't normally possible using the web.
 
-### Demo (of this exact source):
-http://jqueryfiledownload.apphb.com/
-
 ### Source here:
 https://github.com/johnculviner/jquery.fileDownload/blob/master/src/Scripts/jquery.fileDownload.js
 
@@ -59,7 +56,7 @@ This might be a better solution to your problem https://github.com/eligrey/FileS
 Set-Cookie: fileDownload=true; path=/"
 ```
 More details here:
-http://johnculviner.com/post/2012/03/22/Ajax-like-feature-rich-file-downloads-with-jQuery-File-Download.aspx
+https://johnculviner.com/jquery-file-download-plugin-for-ajax-like-feature-rich-file-downloads/
 
 # Install
 ```
@@ -71,7 +68,7 @@ https://github.com/johnculviner/jquery.fileDownload/blob/master/src/Common/FileD
 The above attribute can be used on any controller action that may return a file download that you would like to use jquery.fileDownload.js with
 
 ### For more information and documentation please visit:
-http://johnculviner.com/category/jQuery-File-Download.aspx
+https://johnculviner.com/tag/jquery-filedownload-js/
 
 ### Or look at the well documented JavaScript source:
 https://github.com/johnculviner/jquery.fileDownload/blob/master/src/Scripts/jquery.fileDownload.js
