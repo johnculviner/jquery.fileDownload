@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web;
 using System.Web.Mvc;
 
@@ -29,12 +29,12 @@ namespace MvcDemo.Common
 
             if (filterContext.Result is FileResult)
                 //jquery.fileDownload uses this cookie to determine that a file download has completed successfully
-                response.AppendCookie(new HttpCookie(CookieName, "true") { Path = CookiePath });
+                response.AppendCookie(new HttpCookie(CookieName, "true") { Path = CookiePath, HttpOnly = false });
             else
                 //ensure that the cookie is removed in case someone did a file download without using jquery.fileDownload
                 if (httpContext.Request.Cookies[CookieName] != null)
                 {
-                    response.AppendCookie(new HttpCookie(CookieName, "true") { Expires = DateTime.Now.AddYears(-1), Path = CookiePath });
+                    response.AppendCookie(new HttpCookie(CookieName, "true") { Expires = DateTime.Now.AddYears(-1), Path = CookiePath, HttpOnly = false });
                 }
         }
 
