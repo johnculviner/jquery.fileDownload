@@ -14,7 +14,15 @@
 * !!!!NOTE!!!!
 */
 
-(function($, window){
+(function (factory) {
+	if (typeof define === 'function' && define.amd) {
+		define(['jquery'], factory);
+	} else if (typeof exports === 'object') {
+		module.exports = factory(require('jquery'));
+	} else {
+		factory(jQuery);
+	}
+}(function ($) {
 	// i'll just put them here to get evaluated on script load
 	var htmlSpecialCharsRegEx = /[<>&\r\n"']/gm;
 	var htmlSpecialCharsPlaceHolders = {
@@ -487,4 +495,4 @@ $.extend({
     }
 });
 
-})(jQuery, this || window);
+}));
